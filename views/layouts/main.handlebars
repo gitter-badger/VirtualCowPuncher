@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Infinite Questions</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/style.css"/>
+    <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script src="/static/functions.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+
+<body>
+
+<div class="container-fluid">
+
+    <div class="messages">
+        {{#if message}}
+            <div class="alert alert-info alert-dismissable">
+                <b>{{message}}</b>
+            </div>
+        {{/if}}
+
+    </div>
+
+    <div class="content-area">
+        {{{body}}}
+    </div>
+
+</div>
+
+</body>
+</html>
