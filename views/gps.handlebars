@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title>GPS Testing!!!</title>
+	<meta charset="utf-8" />
+</head>
+<body onload="onLoad()">
+
+	<script>
+		function onLoad() {
+			setInterval(function () { onTimer(); }, 100);
+		
+		}
+
+		var a = 0;
+		function onHavePosition(position) {
+			var el = document.getElementById('output');
+			el.innerHTML = "Queries: " + a++ + "<br>" + 
+								"Longitude: " + position.coords.longitude + "<br>" + 
+							   "Latitude: " + position.coords.latitude + "<br>" + 
+								"Altitude: " + position.coords.altitude + "<br>" +
+								"Accuracy: " + position.coords.accuracy + "<br>" +
+								"Alt Accuracy: " + position.coords.altitudeAccuracy + "<br>";
+								
+			
+		}
+
+		function onPositionError(error) {
+			var el = document.getElementById('output');
+			switch(error.code) {
+			  case error.PERMISSION_DENIED:
+					el.innerHTML = "User denied the request for Geolocation."
+					break;
+			  case error.POSITION_UNAVAILABLE:
+					el.innerHTML = "Location information is unavailable. " + error.message;
+					break;
+			  case error.TIMEOUT:
+					el.innerHTML = "The request to get user location timed out."
+					break;
+			  case error.UNKNOWN_ERROR:
+					el.innerHTML = "An unknown error occurred."
+					break;
+			}
+		}
+
+		function onTimer() {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(onHavePosition, onPositionError, { enableHighAccuracy: true });
+				//navigator.geolocation.watchPosition(onHavePosition, onPositionError);
+			} 
+			else {
+				var el = document.getElementById('output');
+				el.innerHTML = "Geolocation is not supported by this browser.";
+			}
+			
+		}
+
+
+	</script>
+
+	GPS TEST BODY!
+
+	<div id='output'></div>
+</body>
+</html>
