@@ -12,7 +12,7 @@ function Canvas2D(canvasElement) {
    this.invertY = false;
 
 	this.lookAt = new Vector2(0, 0);
-	this.upDir = new Vector(0, 1, 0);
+	this.upDir = new Vector3(0, 1, 0);
 	this.projMatrix = new Matrix();
 	this.rotMatrix = new Matrix();
 	this.translationMatrix = new Matrix();
@@ -174,9 +174,9 @@ Canvas2D.prototype.clientToScene = function (clientX, clientY) {
 
 // Transform a 2D point from scene space to pixel space for drawing.
 Canvas2D.prototype.sceneToCanvas = function (x, y) {
-	
+
 	var vec = new Vector2(x, y);
-	this.matrix.applyToVec2(vec);
+	this.matrix.applyToVector(vec);
 	return vec;
 }
 
@@ -365,6 +365,7 @@ Canvas2D.prototype.drawLineC = function (x1, y1, x2, y2, color) {
 	this.context.stroke();
 };
 
+// Draw a line using vectors
 Canvas2D.prototype.drawLineV = function (v1, v2, color) {
 	this.drawLine(v1.x, v1.y, v2.x, v2.y, color);
 };
@@ -375,6 +376,20 @@ Canvas2D.prototype.drawLine = function (x1, y1, x2, y2, color) {
 	var start = this.sceneToCanvas(x1, y1);
 	var end = this.sceneToCanvas(x2, y2);
 	this.drawLineC(start.x, start.y, end.x, end.y, color);
+}
+
+Canvas2D.prototype.drawPath = function (vectors, color) {
+	if (vectors.length == 0)
+		return;
+	this.context.strokeStyle = color;
+	this.context.beginPath();
+	var vec = this.sceneToCanvas(vectors[0].x, vectors[0].y);
+	this.context.moveTo(vec.x, vec.y);
+	for (var i = 1; i < vectors.length; i++) {
+		vec = this.sceneToCanvas(vectors[i].x, vectors[i].y);
+		this.context.lineTo(vec.x, vec.y);
+	}
+	this.context.stroke();
 }
 
 // Draw a circle using canvas coordinates.  Angles in radians.

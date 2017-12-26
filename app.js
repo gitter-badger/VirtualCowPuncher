@@ -43,8 +43,6 @@ app.use('/javascript', function (req, res) {
 			res.writeHead(400);
 		}
 		else {
-			//var headers = [];
-			//headers['content-type'] = 'application/javascript';
 			res.writeHead(200, { 'Content-Type' : 'application/javascript' });
 			res.write(data);
 		}

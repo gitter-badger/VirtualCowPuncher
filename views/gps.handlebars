@@ -13,21 +13,45 @@
 	<script src="javascript/Canvas2D.js"></script>
 	
 	<script>
+		var canvas2d = null;
+		var path = [];
 		function onLoad() {
-			setInterval(function () { onTimer(); }, 100);
-		
+			setInterval(function () { onTimer(); }, 500);
+			var canvas = document.getElementById('locationCanvas');
+			canvas2D = new Canvas2D(canvas);
+			canvas2D.setProjection(0, 0, 1 /*ppunit */, true /* invertY */);
+			var dim = Math.min(screen.availWidth, screen.availHeight) - 50;
+			canvas.style.width = dim + "px";
+			canvas.style.height = dim + "px";
+			//path.push({ x: -79.0119812, y: 42.4764497 });
 		}
 
 		var a = 0;
+		var maxLat = -9999;
+		var maxLong = -9999;
+		var minLat = 9999;
+		var minLong = 9999;
 		function onHavePosition(position) {
 			var el = document.getElementById('output');
+			var lat = position.coords.latitude;
+			var long = position.coords.longitude;
 			el.innerHTML = "Queries: " + a++ + "<br>" + 
-								"Longitude: " + position.coords.longitude + "<br>" + 
-							   "Latitude: " + position.coords.latitude + "<br>" + 
-								"Altitude: " + position.coords.altitude + "<br>" +
-								"Accuracy: " + position.coords.accuracy + "<br>" +
-								"Alt Accuracy: " + position.coords.altitudeAccuracy + "<br>";
-								
+							"Longitude: " + long + "<br>" + 
+						  	"Latitude: " + lat + "<br>" + 
+							"Altitude: " + position.coords.altitude + "<br>" +
+							"Accuracy: " + position.coords.accuracy + "<br>";
+
+			path.push({ x: long, y: lat});
+			maxLat = Math.max(maxLat, lat);
+			maxLong = Math.max(maxLong, long);
+			minLat = Math.min(minLat, lat);
+			minLong = Math.min(minLong, long);	
+			var ppu = canvas2D.height / Math.max(0.00001, Math.max(maxLat - minLat, maxLong - minLong));	// pixels per unit
+			ppu *= 1.1;
+
+			canvas2D.clear();
+			canvas2D.setProjection((minLong + maxLong)  / 2, (minLat + maxLat) / 2, ppu, true);
+			canvas2D.drawPath(path, 'rgb(0, 255, 60)');
 			
 		}
 
@@ -67,6 +91,6 @@
 	GPS TEST BODY!
 
 	<div id='output'></div>
-	<canvas id='testCanvas' width=600 height=600></canvas>
+	<canvas id='locationCanvas' width=600 height=600></canvas>
 </body>
 </html>
