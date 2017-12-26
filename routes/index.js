@@ -9,5 +9,4 @@ router.get('/cowPuncher', function (req, res) {
 	res.render("home", {"message": "Cow Puncher!!"});
 });
 
-
 module.exports = router;
