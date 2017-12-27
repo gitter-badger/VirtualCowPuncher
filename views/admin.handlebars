@@ -1,0 +1,95 @@
+﻿
+
+	<script src="javascript/MathExt.js"></script>
+	<script src="javascript/Vector2.js"></script>
+	<script src="javascript/Vector3.js"></script>
+	<script src="javascript/Matrix.js"></script>
+	<script src="javascript/GCoord.js"></script>
+	<script src="javascript/Canvas2D.js"></script>
+	
+	<script>
+		var socket = io();
+
+		var canvas2d = null;
+		var path = [];
+		function onLoad() {
+			setInterval(function () { onTimer(); }, 500);
+			var canvas = document.getElementById('locationCanvas');
+			canvas2D = new Canvas2D(canvas);
+			canvas2D.setProjection(0, 0, 1 /*ppunit */, true /* invertY */);
+			var dim = Math.min(screen.availWidth, screen.availHeight) - 50;
+			canvas.style.width = dim + "px";
+			canvas.style.height = dim + "px";
+		}
+
+		function degreesToFeet (degrees) {
+			return degrees * 69 * 5280;		// 69 miles in a degree
+		}
+
+		function feetToDegrees (feet) {
+			return feet / 5280 / 69;		
+		}
+
+		var a = 0;
+		var maxLat = -9999, maxLong = -9999, minLat = 9999, minLong = 9999;
+		function onHavePosition(position) {
+			var el = document.getElementById('output');
+			var lat = position.coords.latitude;
+			var long = position.coords.longitude;
+			el.innerHTML = "Lat: " + lat + ", Long: " + long + ", Alt: " + position.coords.altitude + ", Acc: " + position.coords.accuracy + "<br>";
+
+			gCoord = new GCoord(lat, long);
+
+			maxLat = Math.max(maxLat, lat);
+			maxLong = Math.max(maxLong, long);
+			minLat = Math.min(minLat, lat);
+			minLong = Math.min(minLong, long);	
+			var ppu = canvas2D.height / Math.max(feetToDegrees(30.0), Math.max(maxLat - minLat, maxLong - minLong));	// pixels per unit
+			ppu *= 0.9;  // Provide some margin in the view.
+
+			canvas2D.clear('rgb(230, 230, 230)');
+			//canvas2D.setProjection((minLong + maxLong)  / 2, (minLat + maxLat) / 2, ppu, true);
+			canvas2D.setProjection(0, 0, 1, true);
+			
+			//canvas2D.drawCircle(long, lat, canvas2D.pixelsToUnits(10) /* radius */, 'rgb(0, 0, 255)', 'rgb(0, 0, 0)');
+			//canvas2D.drawPath(path, 'rgb(0, 255, 60)');
+		}
+
+		function onPositionError(error) {
+			var el = document.getElementById('output');
+			switch(error.code) {
+			  case error.PERMISSION_DENIED:
+					el.innerHTML = "User denied the request for Geolocation."
+					break;
+			  case error.POSITION_UNAVAILABLE:
+					el.innerHTML = "Location information is unavailable. " + error.message;
+					break;
+			  case error.TIMEOUT:
+					el.innerHTML = "The request to get user location timed out."
+					break;
+			  case error.UNKNOWN_ERROR:
+					el.innerHTML = "An unknown error occurred."
+					break;
+			}
+		}
+
+		function onTimer() {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(onHavePosition, onPositionError, { enableHighAccuracy: true });
+				//navigator.geolocation.watchPosition(onHavePosition, onPositionError);
+			} 
+			else {
+				var el = document.getElementById('output');
+				el.innerHTML = "Geolocation is not supported by this browser.";
+			}
+			
+		}
+
+
+	</script>
+
+	GPS TEST BODY!
+
+	<div id='output'></div>
+	<canvas id='locationCanvas' width=600 height=600></canvas>
+
