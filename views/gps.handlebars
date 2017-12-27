@@ -1,87 +1,168 @@
-﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GPS Testing!!!</title>
+    <meta charset="utf-8"/>
+</head>
+<body onload="onLoad()">
 
-	<script src="javascript/MathExt.js"></script>
-	<script src="javascript/Vector2.js"></script>
-	<script src="javascript/Vector3.js"></script>
-	<script src="javascript/Matrix.js"></script>
-	<script src="javascript/Canvas2D.js"></script>
-	
-	<script>
-		var socket = io();
+<script src="javascript/MathExt.js"></script>
+<script src="javascript/Vector2.js"></script>
+<script src="javascript/Vector3.js"></script>
+<script src="javascript/Matrix.js"></script>
+<script src="javascript/Canvas2D.js"></script>
 
-		var canvas2d = null;
-		var path = [];
-		function onLoad() {
-			setInterval(function () { onTimer(); }, 500);
-			var canvas = document.getElementById('locationCanvas');
-			canvas2D = new Canvas2D(canvas);
-			canvas2D.setProjection(0, 0, 1 /*ppunit */, true /* invertY */);
-			var dim = Math.min(screen.availWidth, screen.availHeight) - 50;
-			canvas.style.width = dim + "px";
-			canvas.style.height = dim + "px";
-		}
+<script>
+    var canvas2D = null;
+    var path = [];
+    var players = {};
+    var cow_locations = [];
+    var socket;
+    var my_id = Math.round(Math.random() * 1000000);
 
-		var a = 0;
-		var maxLat = -9999, maxLong = -9999, minLat = 9999, minLong = 9999;
-		function onHavePosition(position) {
-			var el = document.getElementById('output');
-			var lat = position.coords.latitude;
-			var long = position.coords.longitude;
-			el.innerHTML = "Queries: " + a++ + "<br>" + 
-							"Longitude: " + long + "<br>" + 
-						  	"Latitude: " + lat + "<br>" + 
-							"Altitude: " + position.coords.altitude + "<br>" +
-							"Accuracy: " + position.coords.accuracy + "<br>";
+    function onLoad() {
 
-			path.push({ x: long, y: lat});
-			maxLat = Math.max(maxLat, lat);
-			maxLong = Math.max(maxLong, long);
-			minLat = Math.min(minLat, lat);
-			minLong = Math.min(minLong, long);	
-			var ppu = canvas2D.height / Math.max(0.00001, Math.max(maxLat - minLat, maxLong - minLong));	// pixels per unit
-			ppu *= 1.1;  // Provide some margin in the view.
+        socket = io();
+        socket.on("locations", function (locations) {
+            console.log(locations);
+            players = locations;
 
-			canvas2D.clear();
-			canvas2D.setProjection((minLong + maxLong)  / 2, (minLat + maxLat) / 2, ppu, true);
-			canvas2D.drawPath(path, 'rgb(0, 255, 60)');
-			
-		}
+            var currentMaxLat = maxLat;
+            var currentMaxLong = maxLong;
+            var currentMinLat = minLat;
+            var currentMinLong = minLong;
 
-		function onPositionError(error) {
-			var el = document.getElementById('output');
-			switch(error.code) {
-			  case error.PERMISSION_DENIED:
-					el.innerHTML = "User denied the request for Geolocation."
-					break;
-			  case error.POSITION_UNAVAILABLE:
-					el.innerHTML = "Location information is unavailable. " + error.message;
-					break;
-			  case error.TIMEOUT:
-					el.innerHTML = "The request to get user location timed out."
-					break;
-			  case error.UNKNOWN_ERROR:
-					el.innerHTML = "An unknown error occurred."
-					break;
-			}
-		}
+            for (var i in locations) {
+                currentMaxLat = Math.max(currentMaxLat, locations[i]['y']);
+                currentMaxLong = Math.max(currentMaxLong, locations[i]['x']);
+                currentMinLat = Math.min(currentMinLat, locations[i]['y']);
+                currentMinLong = Math.min(currentMinLong, locations[i]['x']);
+            }
 
-		function onTimer() {
-			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(onHavePosition, onPositionError, { enableHighAccuracy: true });
-				//navigator.geolocation.watchPosition(onHavePosition, onPositionError);
-			} 
-			else {
-				var el = document.getElementById('output');
-				el.innerHTML = "Geolocation is not supported by this browser.";
-			}
-			
-		}
+            updateProjection(currentMaxLat, currentMaxLong, currentMinLat, currentMinLong);
+
+            redraw();
+        });
+        socket.on("cow_locations", function (c_locations) {
+            cow_locations = c_locations;
+            redraw();
+        });
+
+        setInterval(function () {
+            onTimer();
+        }, 500);
+        var canvas = document.getElementById('locationCanvas');
+        canvas2D = new Canvas2D(canvas);
+        canvas2D.setProjection(0, 0, 1 /*ppunit */, true /* invertY */);
+        var dim = Math.min(screen.availWidth, screen.availHeight) - 50;
+        canvas.style.width = dim + "px";
+        canvas.style.height = dim + "px";
+        //path.push({ x: -79.0119812, y: 42.4764497 });
+    }
+
+    var a = 0;
+    var maxLat = -9999;
+    var maxLong = -9999;
+    var minLat = 9999;
+    var minLong = 9999;
+    function onHavePosition(position) {
+        var el = document.getElementById('output');
+        var lat = position.coords.latitude;
+        var long = position.coords.longitude;
+        socket.emit('player_location', {'id': my_id, 'latitude': lat, 'longitude': long});
+        el.innerHTML = "Queries: " + a++ + "<br>" +
+                "Longitude: " + long + "<br>" +
+                "Latitude: " + lat + "<br>" +
+                "Altitude: " + position.coords.altitude + "<br>" +
+                "Accuracy: " + position.coords.accuracy + "<br>";
+
+        path.push({x: long, y: lat});
+        updateProjection(lat, long, lat, long);
+//        maxLat = Math.max(maxLat, lat);
+//        maxLong = Math.max(maxLong, long);
+//        minLat = Math.min(minLat, lat);
+//        minLong = Math.min(minLong, long);
+//        var ppu = canvas2D.height / Math.max(0.00001, Math.max(maxLat - minLat, maxLong - minLong));	// pixels per unit
+//        ppu *= 0.9;
+//        canvas2D.setProjection((minLong + maxLong) / 2, (minLat + maxLat) / 2, ppu, true);
+        redraw();
+    }
+
+    function updateProjection(newMaxLat, newMaxLong, newMinLat, newMinLong) {
+        maxLat = Math.max(maxLat, newMaxLat);
+        maxLong = Math.max(maxLong, newMaxLong);
+        minLat = Math.min(minLat, newMinLat);
+        minLong = Math.min(minLong, newMinLong);
+//        console.log('***');
+//        console.log(maxLat);
+//        console.log(maxLong);
+//        console.log(minLat);
+//        console.log(minLong);
+//        console.log('***');
+        var ppu = canvas2D.height / Math.max(0.00001, Math.max(maxLat - minLat, maxLong - minLong));	// pixels per unit
+        ppu *= 0.9;
+        canvas2D.setProjection((minLong + maxLong) / 2, (minLat + maxLat) / 2, ppu, true);
+    }
+
+    function redraw() {
+        canvas2D.clear('rgb(50, 50, 50)');
+        canvas2D.drawPath(path, 'rgb(0, 255, 60)');
+
+        for (var player_id in players) {
+            console.log(player_id);
+            console.log(players[player_id]);
+            if (parseInt(player_id) === my_id) {
+                console.log("me");
+//                canvas2D.drawCircle(players[player_id]['x'], players[player_id]['y'], 2.0 / canvas2D.pixelsPerUnit, 'rgb(0, 0, 0)', 'rgb(180, 255, 0)');
+//                canvas2D.drawCircle(players[player_id]['x']+0.01, players[player_id]['y'], 5.0 / canvas2D.pixelsPerUnit, 'rgb(0, 0, 0)', 'rgb(180, 255, 0)');
+                canvas2D.drawCircle(players[player_id]['x']-0.05, players[player_id]['y'], 4.0 / canvas2D.pixelsPerUnit, 'rgb(0, 0, 0)', 'rgb(180, 255, 0)');
+//                canvas2D.drawCircle(players[player_id]['x']+0.05, players[player_id]['y'], 3.0 / canvas2D.pixelsPerUnit, 'rgb(0, 0, 0)', 'rgb(180, 255, 0)');
+            }else{
+                console.log("other player");
+                canvas2D.drawCircle(players[player_id]['x'], players[player_id]['y'], 8.0 / canvas2D.pixelsPerUnit, 'rgb(0, 0, 0)', 'rgb(255, 180, 0)');
+            }
+
+            console.log(canvas2D.pixelsPerUnit);
+        }
+    }
 
 
-	</script>
+    function onPositionError(error) {
+        var el = document.getElementById('output');
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                el.innerHTML = "User denied the request for Geolocation."
+                break;
+            case error.POSITION_UNAVAILABLE:
+                el.innerHTML = "Location information is unavailable. " + error.message;
+                break;
+            case error.TIMEOUT:
+                el.innerHTML = "The request to get user location timed out."
+                break;
+            case error.UNKNOWN_ERROR:
+                el.innerHTML = "An unknown error occurred."
+                break;
+        }
+    }
 
-	GPS TEST BODY!
+    function onTimer() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(onHavePosition, onPositionError, {enableHighAccuracy: true});
+            //navigator.geolocation.watchPosition(onHavePosition, onPositionError);
+        }
+        else {
+            var el = document.getElementById('output');
+            el.innerHTML = "Geolocation is not supported by this browser.";
+        }
 
-	<div id='output'></div>
-	<canvas id='locationCanvas' width=600 height=600></canvas>
+    }
 
+
+</script>
+
+GPS TEST BODY!
+
+<div id='output'></div>
+<canvas id='locationCanvas' width=600 height=600></canvas>
+</body>
+</html>

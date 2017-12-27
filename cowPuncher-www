@@ -7,6 +7,8 @@
 
 var app = require('./app');
 var debug = require('debug')('CowPuncher:server');
+var http = require('http');
+var game = require('./game/server_game');
 //var http = require('http');
 var https = require('https');
 var fs = require('fs');
@@ -22,34 +24,18 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var options =  { 
-	key:    fs.readFileSync('certs/cowpuncher.key'),
-   cert:   fs.readFileSync('certs/cowpuncher.cert'),
-   ca:     fs.readFileSync('certs/cowpuncher.cert')
+var options = {
+	key: fs.readFileSync('certs/cowpuncher.key'),
+	cert: fs.readFileSync('certs/cowpuncher.cert'),
+	ca: fs.readFileSync('certs/cowpuncher.cert')
 };
 
 
 var server = https.createServer(options, app);
-
-var squareSize = 20;
-var boardSize = 600;
-var squaresAcross = boardSize / squareSize;
-
-function randomCoordinate() {
-	return Math.floor((Math.random() * squaresAcross));
-}
-
-var number_of_cows = 20;
-var cows = [];
-
-var too_close = 5;
-
-for (var q = 0; q < number_of_cows; q++) {
-	cows.push([randomCoordinate(), randomCoordinate()]);
-}
-
 var io = require('socket.io').listen(server);
+game.initialize(io);
 
+/*
 var locations = {};
 
 io.on('connection', function (socket) {
@@ -72,24 +58,24 @@ io.on('connection', function (socket) {
 		locations[movement['id']] = {'x': movement['x'], 'y': movement['y']};
 		io.emit('locations', locations);
 
-		for(var cow in cows){
+		for (var cow in cows) {
 			var this_cow = cows[cow];
 			var x = movement['x'];
 			var y = movement['y'];
 			var diff_x = Math.abs(this_cow[0] - x);
 			var diff_y = Math.abs(this_cow[1] - y);
 			var diff = diff_x + diff_y;
-			if(diff < too_close){
-				if(diff_x > diff_y){
-					if(this_cow[0] > x){
+			if (diff < too_close) {
+				if (diff_x > diff_y) {
+					if (this_cow[0] > x) {
 						this_cow[0] = this_cow[0] + 1;
-					}else{
+					} else {
 						this_cow[0] = this_cow[0] - 1;
 					}
-				}else{
-					if(this_cow[1] > y){
+				} else {
+					if (this_cow[1] > y) {
 						this_cow[1] = this_cow[1] + 1;
-					}else{
+					} else {
 						this_cow[1] = this_cow[1] - 1;
 					}
 				}
@@ -100,7 +86,7 @@ io.on('connection', function (socket) {
 	});
 
 });
-
+*/
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -163,11 +149,10 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  console.log('Listening Https on ' + bind);
-  debug('Listening Https on ' + bind);
+	var addr = server.address();
+	var bind = typeof addr === 'string'
+		? 'pipe ' + addr
+		: 'port ' + addr.port;
+	console.log('Listening Https on ' + bind);
+	debug('Listening Https on ' + bind);
 }
-
