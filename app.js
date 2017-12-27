@@ -8,6 +8,8 @@ var bodyParser = require('body-parser');
 var exphbs  = require('express-handlebars');
 var session = require('express-session');
 var flash = require('express-flash');
+var fs = require('fs');
+var url = require('url');
 
 var mongo = require('mongodb');
 var monk = require('monk');
@@ -31,6 +33,23 @@ var hbs = exphbs.create({defaultLayout: 'main'
 	//,helpers : handlebar_helpers
 });
 app.set('views', path.join(__dirname, 'views'));
+
+app.use('/javascript', function (req, res) {
+	var requestUrl = url.parse(req.url);
+	var pathName = decodeURIComponent(requestUrl.pathname);
+	var fileName = "./javascript/" + pathName;
+	fs.readFile(fileName, function (err, data) {
+		if (err)  { 
+			res.writeHead(400);
+		}
+		else {
+			res.writeHead(200, { 'Content-Type' : 'application/javascript' });
+			res.write(data);
+		}
+		res.end();
+	});
+});
+
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 hbs.getPartials();

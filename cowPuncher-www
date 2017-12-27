@@ -4,9 +4,12 @@
  * Module dependencies.
  */
 
+
 var app = require('./app');
 var debug = require('debug')('CowPuncher:server');
-var http = require('http');
+//var http = require('http');
+var https = require('https');
+var fs = require('fs');
 
 /**
  * Get port from environment and store in Express.
@@ -19,7 +22,14 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+var options =  { 
+	key:    fs.readFileSync('certs/cowpuncher.key'),
+   cert:   fs.readFileSync('certs/cowpuncher.cert'),
+   ca:     fs.readFileSync('certs/cowpuncher.cert')
+};
+
+
+var server = https.createServer(options, app);
 
 var squareSize = 20;
 var boardSize = 600;
@@ -153,10 +163,11 @@ function onError(error) {
  */
 
 function onListening() {
-	var addr = server.address();
-	var bind = typeof addr === 'string'
-		? 'pipe ' + addr
-		: 'port ' + addr.port;
-	console.log('Listening on ' + bind);
-	debug('Listening on ' + bind);
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  console.log('Listening Https on ' + bind);
+  debug('Listening Https on ' + bind);
 }
+
