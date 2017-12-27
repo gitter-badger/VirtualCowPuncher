@@ -148,8 +148,7 @@ Canvas2D.prototype.vecFromCenter = function (canvasX, canvasY) {
 }
 
 Canvas2D.prototype.updateProjMatrix = function () {
-	var rect = this.domElement.getBoundingClientRect();
-	this.projMatrix.setToTranslation(this.width / 2.0, rect.height / 2.0);
+	this.projMatrix.setToTranslation(this.width / 2.0, this.height / 2.0);	// The canvas may have different dimensions internally than the css displayed element.
 	this.projMatrix.e[0] = this.pixelsPerUnit;
 	this.projMatrix.e[5] = this.pixelsPerUnit;
 }
