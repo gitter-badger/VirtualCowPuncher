@@ -149,7 +149,7 @@ Canvas2D.prototype.vecFromCenter = function (canvasX, canvasY) {
 
 Canvas2D.prototype.updateProjMatrix = function () {
 	var rect = this.domElement.getBoundingClientRect();
-	this.projMatrix.setToTranslation(rect.width / 2.0, rect.height / 2.0);
+	this.projMatrix.setToTranslation(this.width / 2.0, rect.height / 2.0);
 	this.projMatrix.e[0] = this.pixelsPerUnit;
 	this.projMatrix.e[5] = this.pixelsPerUnit;
 }
@@ -375,7 +375,7 @@ Canvas2D.prototype.drawLineV = function (v1, v2, color) {
 };
 
 // Coordinates are in local projection coordinates.
-Canvas2D.prototype.drawLine = function (x1, y1, x2, y2, color) {
+Canvas2D.prototype.drawLine = function (x1, y1, x2, y2, color) {	
 
 	var start = this.sceneToCanvas(x1, y1);
 	var end = this.sceneToCanvas(x2, y2);

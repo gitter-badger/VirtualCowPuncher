@@ -4,6 +4,7 @@
 	<script src="javascript/Vector2.js"></script>
 	<script src="javascript/Vector3.js"></script>
 	<script src="javascript/Matrix.js"></script>
+	<script src="javascript/GCoord.js"></script>
 	<script src="javascript/Canvas2D.js"></script>
 	
 	<script>
@@ -37,6 +38,8 @@
 			var long = position.coords.longitude;
 			el.innerHTML = "Lat: " + lat + ", Long: " + long + ", Alt: " + position.coords.altitude + ", Acc: " + position.coords.accuracy + "<br>";
 
+			gCoord = new GCoord(lat, long);
+
 			maxLat = Math.max(maxLat, lat);
 			maxLong = Math.max(maxLong, long);
 			minLat = Math.min(minLat, lat);
@@ -45,8 +48,10 @@
 			ppu *= 0.9;  // Provide some margin in the view.
 
 			canvas2D.clear('rgb(230, 230, 230)');
-			canvas2D.setProjection((minLong + maxLong)  / 2, (minLat + maxLat) / 2, ppu, true);
-			canvas2D.drawCircle(long, lat, canvas2D.pixelsToUnits(10) /* radius */, 'rgb(0, 0, 255)', 'rgb(0, 0, 0)');
+			//canvas2D.setProjection((minLong + maxLong)  / 2, (minLat + maxLat) / 2, ppu, true);
+			canvas2D.setProjection(0, 0, 1, true);
+			
+			//canvas2D.drawCircle(long, lat, canvas2D.pixelsToUnits(10) /* radius */, 'rgb(0, 0, 255)', 'rgb(0, 0, 0)');
 			//canvas2D.drawPath(path, 'rgb(0, 255, 60)');
 		}
 
