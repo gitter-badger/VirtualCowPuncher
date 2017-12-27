@@ -1,10 +1,4 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-	<title>GPS Testing!!!</title>
-	<meta charset="utf-8" />
-</head>
-<body onload="onLoad()">
+﻿
 
 	<script src="javascript/MathExt.js"></script>
 	<script src="javascript/Vector2.js"></script>
@@ -13,6 +7,8 @@
 	<script src="javascript/Canvas2D.js"></script>
 	
 	<script>
+		var socket = io();
+
 		var canvas2d = null;
 		var path = [];
 		function onLoad() {
@@ -23,14 +19,10 @@
 			var dim = Math.min(screen.availWidth, screen.availHeight) - 50;
 			canvas.style.width = dim + "px";
 			canvas.style.height = dim + "px";
-			//path.push({ x: -79.0119812, y: 42.4764497 });
 		}
 
 		var a = 0;
-		var maxLat = -9999;
-		var maxLong = -9999;
-		var minLat = 9999;
-		var minLong = 9999;
+		var maxLat = -9999, maxLong = -9999, minLat = 9999, minLong = 9999;
 		function onHavePosition(position) {
 			var el = document.getElementById('output');
 			var lat = position.coords.latitude;
@@ -47,7 +39,7 @@
 			minLat = Math.min(minLat, lat);
 			minLong = Math.min(minLong, long);	
 			var ppu = canvas2D.height / Math.max(0.00001, Math.max(maxLat - minLat, maxLong - minLong));	// pixels per unit
-			ppu *= 1.1;
+			ppu *= 1.1;  // Provide some margin in the view.
 
 			canvas2D.clear();
 			canvas2D.setProjection((minLong + maxLong)  / 2, (minLat + maxLat) / 2, ppu, true);
@@ -92,5 +84,4 @@
 
 	<div id='output'></div>
 	<canvas id='locationCanvas' width=600 height=600></canvas>
-</body>
-</html>
+
