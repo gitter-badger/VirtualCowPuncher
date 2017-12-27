@@ -48,7 +48,7 @@ GCoord.prototype.angle = function (other /* GCoord */) {
 };
 
 // Returns a point on a 360 image the gcoord would lie on.  360 image rations are 2:1
-GCoord.prototype.to360Point = function (height, bias /* 'left' || 'right' */) {
+GCoord.prototype.to360Point = function (height, bias /* opt, 'left' || 'right' */) {
 	var long = this.long < 0 ? this.long + 360 : this.long % 360;
 		
 	if (bias && bias == 'left' && long >= 300)
@@ -67,6 +67,16 @@ GCoord.prototype.to360Point = function (height, bias /* 'left' || 'right' */) {
 	
 	return vec;
 };
+
+// Convert to a standardized xy point.  Uses mercator projection.
+GCoord.prototype.toXYPoint = function () {
+	var vec = new Vector2();
+	vec.x = (this.long + 360 % 360) / 360 * 2.0;	// 0 - 2.
+	var mercLat = Math.log(Math.tan(Math.PI / 4.0 + (MathExt.degToRad(this.lat) / 2.0)));
+	vec.y = 0.5 - (2.0 * mercLat / (2.0 * Math.PI)); // 0 - 1.
+		
+	return vec;
+}
 
 // returns Vec2 of the mapping to a polar coordinate where the center is the north pole.
 // .https://en.wikipedia.org/wiki/Azimuthal_equidistant_projection

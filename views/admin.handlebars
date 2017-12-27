@@ -31,27 +31,28 @@
 		}
 
 		var a = 0;
-		var maxLat = -9999, maxLong = -9999, minLat = 9999, minLong = 9999;
+		var maxX = -9999, maxY = -9999, minX = 9999, minY = 9999;
 		function onHavePosition(position) {
+
 			var el = document.getElementById('output');
 			var lat = position.coords.latitude;
 			var long = position.coords.longitude;
 			el.innerHTML = "Lat: " + lat + ", Long: " + long + ", Alt: " + position.coords.altitude + ", Acc: " + position.coords.accuracy + "<br>";
 
 			gCoord = new GCoord(lat, long);
+			var vec = gCoord.toXYPoint();
 
-			maxLat = Math.max(maxLat, lat);
-			maxLong = Math.max(maxLong, long);
-			minLat = Math.min(minLat, lat);
-			minLong = Math.min(minLong, long);	
-			var ppu = canvas2D.height / Math.max(feetToDegrees(30.0), Math.max(maxLat - minLat, maxLong - minLong));	// pixels per unit
+			maxX = Math.max(maxX, vec.x);
+			maxY = Math.max(maxY, vec.y);
+			minX = Math.min(minX, vec.x);
+			minY = Math.min(minY, vec.y);	
+			var ppu = canvas2D.height / Math.max(feetToDegrees(30.0), Math.max(maxX - minX, maxY - minY));	// pixels per unit
 			ppu *= 0.9;  // Provide some margin in the view.
-
-			canvas2D.clear('rgb(230, 230, 230)');
-			//canvas2D.setProjection((minLong + maxLong)  / 2, (minLat + maxLat) / 2, ppu, true);
-			canvas2D.setProjection(0, 0, 1, true);
 			
-			//canvas2D.drawCircle(long, lat, canvas2D.pixelsToUnits(10) /* radius */, 'rgb(0, 0, 255)', 'rgb(0, 0, 0)');
+			canvas2D.clear('rgb(230, 230, 230)');
+			canvas2D.setProjection((minX + maxX)  / 2, (minY + maxY) / 2, ppu, true);
+			
+			canvas2D.drawCircle(vec.x, vec.y, canvas2D.pixelsToUnits(10) /* radius */, 'rgb(0, 0, 255)', 'rgb(0, 0, 0)');
 			//canvas2D.drawPath(path, 'rgb(0, 255, 60)');
 		}
 
