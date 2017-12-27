@@ -13,4 +13,8 @@ router.get('/gps', function (req, res) {
 	res.render("gps", {"message": "GPS Test!"});
 });
 
+router.get('/admin', function (req, res) {
+	res.render("admin", {"message": "Cowpuncher admin page!"});
+});
+
 module.exports = router;

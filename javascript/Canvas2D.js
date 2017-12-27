@@ -74,6 +74,10 @@ Canvas2D.prototype.setCenter = function (x, y) {
 	this.setProjection(x, y, this.pixelsPerUnit, this.invertY)
 }
 
+Canvas2D.prototype.pixelsToUnits = function (pixels) {
+	return pixels / this.pixelsPerUnit;
+}
+
 // Zoom the scene by a factor.  1.05 zooms in 5%, 95% would zoom out 5%.
 Canvas2D.prototype.zoom = function (factor) {
 
