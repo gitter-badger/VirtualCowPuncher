@@ -1,91 +1,29 @@
 ﻿
 
-	<script src="javascript/MathExt.js"></script>
-	<script src="javascript/Vector2.js"></script>
-	<script src="javascript/Vector3.js"></script>
-	<script src="javascript/Matrix.js"></script>
-	<script src="javascript/GCoord.js"></script>
-	<script src="javascript/Canvas2D.js"></script>
-	
+	<script src="scripts/require.js"></script>
+    
 	<script>
-		var socket = io();
-
-		var canvas2d = null;
-		var path = [];
+		//var socket = io();
+	
+      var scene = null;       // The main Scene object
 		function onLoad() {
-			setInterval(function () { onTimer(); }, 500);
-			var canvas = document.getElementById('locationCanvas');
-			canvas2D = new Canvas2D(canvas);
-			canvas2D.setProjection(0, 0, 1 /*ppunit */, true /* invertY */);
-			var dim = Math.min(screen.availWidth, screen.availHeight) - 50;
-			canvas.style.width = dim + "px";
-			canvas.style.height = dim + "px";
+         requirejs.config({
+				baseUrl: './javascript',
+				priority: [],
+				paths: {
+				}
+			});
+
+         require(['Scene'], function (Scene) {
+			   canvas = document.getElementById('locationCanvas');
+				var dim = Math.min(screen.availWidth, screen.availHeight) - 50;
+				canvas.style.width = dim + "px";
+				canvas.style.height = dim + "px";
+
+				var output = document.getElementById('output');
+				this.scene = new Scene(canvas, output);
+          });     
 		}
-
-		function degreesToFeet (degrees) {
-			return degrees * 69 * 5280;		// 69 miles in a degree
-		}
-
-		function feetToDegrees (feet) {
-			return feet / 5280 / 69;		
-		}
-
-		var a = 0;
-		var maxX = -9999, maxY = -9999, minX = 9999, minY = 9999;
-		function onHavePosition(position) {
-
-			var el = document.getElementById('output');
-			var lat = position.coords.latitude;
-			var long = position.coords.longitude;
-			el.innerHTML = "Lat: " + lat + ", Long: " + long + ", Alt: " + position.coords.altitude + ", Acc: " + position.coords.accuracy + "<br>";
-
-			gCoord = new GCoord(lat, long);
-			var vec = gCoord.toXYPoint();
-
-			maxX = Math.max(maxX, vec.x);
-			maxY = Math.max(maxY, vec.y);
-			minX = Math.min(minX, vec.x);
-			minY = Math.min(minY, vec.y);	
-			var ppu = canvas2D.height / Math.max(feetToDegrees(30.0), Math.max(maxX - minX, maxY - minY));	// pixels per unit
-			ppu *= 0.9;  // Provide some margin in the view.
-			
-			canvas2D.clear('rgb(230, 230, 230)');
-			canvas2D.setProjection((minX + maxX)  / 2, (minY + maxY) / 2, ppu, true);
-			
-			canvas2D.drawCircle(vec.x, vec.y, canvas2D.pixelsToUnits(10) /* radius */, 'rgb(0, 0, 255)', 'rgb(0, 0, 0)');
-			//canvas2D.drawPath(path, 'rgb(0, 255, 60)');
-		}
-
-		function onPositionError(error) {
-			var el = document.getElementById('output');
-			switch(error.code) {
-			  case error.PERMISSION_DENIED:
-					el.innerHTML = "User denied the request for Geolocation."
-					break;
-			  case error.POSITION_UNAVAILABLE:
-					el.innerHTML = "Location information is unavailable. " + error.message;
-					break;
-			  case error.TIMEOUT:
-					el.innerHTML = "The request to get user location timed out."
-					break;
-			  case error.UNKNOWN_ERROR:
-					el.innerHTML = "An unknown error occurred."
-					break;
-			}
-		}
-
-		function onTimer() {
-			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(onHavePosition, onPositionError, { enableHighAccuracy: true });
-				//navigator.geolocation.watchPosition(onHavePosition, onPositionError);
-			} 
-			else {
-				var el = document.getElementById('output');
-				el.innerHTML = "Geolocation is not supported by this browser.";
-			}
-			
-		}
-
 
 	</script>
 

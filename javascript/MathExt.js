@@ -1,6 +1,7 @@
 ﻿// MathExt: An extension of the generic Javascript Math library.
 
-var MathExt = {
+define({
+
 	radToDeg: function (rad) { return rad * 57.2957795; },
 	degToRad: function (deg) { return deg / 57.2957795; },
 
@@ -40,4 +41,4 @@ var MathExt = {
 			n *= 2;
 		return n;
 	}
-}
+});

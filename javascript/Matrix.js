@@ -1,10 +1,14 @@
-﻿
-
-//////////////////////////////////////////////////////////
+﻿//////////////////////////////////////////////////////////
 // Matrix
 // Matrix math.  Based on examples in WebGL: Programming Guide.
 // Generally works for Vector3 and Vector2.
 
+
+define(function (require) {
+
+    var Vector3 = require("./Vector3");
+    var MathExt = require("./MathExt");
+	
 	function Matrix() {
 		// Set to identity
 		this.e = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -583,4 +587,7 @@
 
 		return this;
 	};
+
+    return Matrix;
+ });
 	

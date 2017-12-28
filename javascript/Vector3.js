@@ -2,8 +2,9 @@
 ////////////////////////////////////////////////////////////////
 // Vector3
 
+define(function (require) {
 
-
+	var MathExt = require("common/MathExt");
 			
 	function Vector3(xOrVec /*float*/, y /*float*/, z /*float*/) {
 		if (xOrVec && xOrVec.x !== undefined) {
@@ -278,3 +279,6 @@
 		var p = precision ? precision : 4;
 		return "X: " + this.x.toFixed(p) + "\tY: " + this.y.toFixed(p) + "\tZ: " + this.z.toFixed(p);
 	};
+
+    return Vector3;
+ });

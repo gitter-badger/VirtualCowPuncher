@@ -34,10 +34,12 @@ var hbs = exphbs.create({defaultLayout: 'main'
 });
 app.set('views', path.join(__dirname, 'views'));
 
-app.use('/javascript', function (req, res) {
+function passThrough(req, res, baseDir) {
 	var requestUrl = url.parse(req.url);
 	var pathName = decodeURIComponent(requestUrl.pathname);
-	var fileName = "./javascript/" + pathName;
+	
+	var fileName = baseDir + pathName;
+	console.log(fileName);
 	fs.readFile(fileName, function (err, data) {
 		if (err)  { 
 			res.writeHead(400);
@@ -48,7 +50,10 @@ app.use('/javascript', function (req, res) {
 		}
 		res.end();
 	});
-});
+}
+
+app.use('/javascript', function (req, res) {	passThrough(req, res, 'javascript') });
+app.use('/scripts', function (req, res) {	passThrough(req, res, 'scripts') });
 
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
