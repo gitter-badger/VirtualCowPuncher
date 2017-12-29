@@ -8,6 +8,7 @@ define(function (require)  {
 	var GCoord = require('GCoord');
 	var Vector2 = require('Vector2');
 	var MathExt = require('MathExt');
+	var CPObject = require('CPObject');
 
    function Scene (canvasElement /* DOMElement */, outputElement /* opt, DOMElement */) {
 	   
@@ -19,7 +20,9 @@ define(function (require)  {
 		this.output = outputElement;
 
 		this.maxX = -9999, this.maxY = -9999, this.minX = 9999, this.minY = 9999;	// bounds for the canvas space.
-		this.playerPosition = new Vector2();
+
+		this.player = new CPObject();
+		this.objects = [];			// Objects[]
 
 		var self = this;
 		this.gpsTimer = setInterval(function () { self.onGPSTimer(); }, 500);
@@ -63,13 +66,13 @@ define(function (require)  {
 		if (this.output)
 			this.output.innerHTML = "Lat: " + lat + ", Long: " + long + ", Alt: " + position.coords.altitude + ", Acc: " + position.coords.accuracy + "<br>";
 
-		this.gCoordToXY2(lat, long, this.playerPosition);
+		this.gCoordToXY2(lat, long, this.player.position)
 
 		var needsUpdate = false;
-		if (this.maxX < this.playerPosition.x) { this.maxX = this.playerPosition.x;  needsUpdate = true; }
-		if (this.maxY < this.playerPosition.y) { this.maxY = this.playerPosition.y;  needsUpdate = true; }
-		if (this.minX > this.playerPosition.x) { this.minX = this.playerPosition.x;  needsUpdate = true; }
-		if (this.minY > this.playerPosition.x) { this.minY = this.playerPosition.y;  needsUpdate = true; }
+		if (this.maxX < this.player.position.x) { this.maxX = this.player.position.x;  needsUpdate = true; }
+		if (this.maxY < this.player.position.y) { this.maxY = this.player.position.y;  needsUpdate = true; }
+		if (this.minX > this.player.position.x) { this.minX = this.player.position.x;  needsUpdate = true; }
+		if (this.minY > this.player.position.x) { this.minY = this.player.position.y;  needsUpdate = true; }
 	
 		if (needsUpdate) {
 			var ppu = this.canvas.height / Math.max(this.feetToXY(30), Math.max(this.maxX - this.minX, this.maxY - this.minY));	// pixels per unit
@@ -119,7 +122,12 @@ define(function (require)  {
 
 	Scene.prototype.redraw = function () {
 		this.canvas.clear('rgb(230, 230, 230)');
-		this.canvas.drawCircle(this.playerPosition.x, this.playerPosition.y, this.canvas.pixelsToUnits(10) /* radius */, 'rgb(0, 0, 255)', 'rgb(0, 0, 0)');
+
+		this.player.draw(this.canvas);
+
+		for (var i = 0; i < this.objects.length; i++)
+			this.objects[i].draw(this.canvas);
+		
 	}
 
 	return Scene;
