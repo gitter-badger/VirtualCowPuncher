@@ -15,7 +15,7 @@ var mongo = require('mongodb');
 var monk = require('monk');
 var db = monk('localhost:27017/cowPuncher');
 
-var index_routes = require('./routes/index');
+var index_routes = require('./server/routes');
 
 var app = express();
 
