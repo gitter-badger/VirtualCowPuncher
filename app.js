@@ -34,38 +34,38 @@ var hbs = exphbs.create({defaultLayout: 'main'
 });
 app.set('views', path.join(__dirname, 'views'));
 
-function passThrough(req, res, baseDir) {
-	var requestUrl = url.parse(req.url);
-	var pathName = decodeURIComponent(requestUrl.pathname);
-	
-	var fileName = baseDir + pathName;
-	console.log(fileName);
-	fs.readFile(fileName, function (err, data) {
-		if (err)  { 
-			res.writeHead(400);
-		}
-		else {
-			res.writeHead(200, { 'Content-Type' : 'application/javascript' });
-			res.write(data);
-		}
-		res.end();
-	});
-}
-
-app.use('/javascript', function (req, res) {	passThrough(req, res, 'javascript') });
-app.use('/scripts', function (req, res) {	passThrough(req, res, 'scripts') });
+//function passThrough(req, res, baseDir) {
+//	var requestUrl = url.parse(req.url);
+//	var pathName = decodeURIComponent(requestUrl.pathname);
+//
+//	var fileName = baseDir + pathName;
+//	console.log(fileName);
+//	fs.readFile(fileName, function (err, data) {
+//		if (err)  {
+//			res.writeHead(400);
+//		}
+//		else {
+//			res.writeHead(200, { 'Content-Type' : 'application/javascript' });
+//			res.write(data);
+//		}
+//		res.end();
+//	});
+//}
+//
+//app.use('/javascript', function (req, res) {	passThrough(req, res, 'javascript') });
+//app.use('/scripts', function (req, res) {	passThrough(req, res, 'scripts') });
 
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 hbs.getPartials();
 
 
-//app.use(favicon(path.join(__dirname, 'public', 'static', 'favicon.ico')));
+//app.use(favicon(path.join(__dirname, 'client', 'static', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'client')));
 
 
 app.use(function (req, res, next) {
