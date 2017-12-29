@@ -8,13 +8,13 @@
       var scene = null;       // The main Scene object
 		function onLoad() {
          requirejs.config({
-				baseUrl: './javascript',
+				baseUrl: '../javascript',
 				priority: [],
 				paths: {
 				}
 			});
 
-         require(['Scene'], function (Scene) {
+			require(['Scene'], function (Scene) {
 			   canvas = document.getElementById('locationCanvas');
 				var dim = Math.min(screen.availWidth, screen.availHeight) - 50;
 				canvas.style.width = dim + "px";
@@ -22,7 +22,8 @@
 
 				var output = document.getElementById('output');
 				this.scene = new Scene(canvas, output);
-          });     
+          });   
+			 
 		}
 
 	</script>

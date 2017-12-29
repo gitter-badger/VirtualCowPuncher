@@ -6,6 +6,7 @@ define(function (require)  {
     
    var Canvas2D = require('Canvas2D');
 	var GCoord = require('GCoord');
+	var Vector2 = require('Vector2');
 
    function Scene (canvasElement /* DOMElement */, outputElement /* opt, DOMElement */) {
 	   
@@ -33,15 +34,15 @@ define(function (require)  {
 		gCoord.toXYPoint(this.playerPosition);
 
 		var needsUpdate = false;
-		if (maxX < vec.x) { maxX = vec.x;  needsUpdate = true; }
-		if (maxY < vec.y) { maxY = vec.y;  needsUpdate = true; }
-		if (minX > vec.x) { minX = vec.x;  needsUpdate = true; }
-		if (minY > vec.x) { minY = vec.y;  needsUpdate = true; }
+		if (this.maxX < this.playerPosition.x) { this.maxX = this.playerPosition.x;  needsUpdate = true; }
+		if (this.maxY < this.playerPosition.y) { this.maxY = this.playerPosition.y;  needsUpdate = true; }
+		if (this.minX > this.playerPosition.x) { this.minX = this.playerPosition.x;  needsUpdate = true; }
+		if (this.minY > this.playerPosition.x) { this.minY = this.playerPosition.y;  needsUpdate = true; }
 	
 		if (needsUpdate) {
-			var ppu = this.canvas.height / Math.max(feetToDegrees(30.0), Math.max(maxX - minX, maxY - minY));	// pixels per unit
+			var ppu = this.canvas.height / Math.max(0.00001, Math.max(this.maxX - this.minX, this.maxY - this.minY));	// pixels per unit
 			ppu *= 0.9;  // Provide some margin in the view.
-			this.canvas.setProjection((minX + maxX)  / 2, (minY + maxY) / 2, ppu, true);
+			this.canvas.setProjection((this.minX + this.maxX)  / 2, (this.minY + this.maxY) / 2, ppu, true);
 		}
 		
 		this.redraw();

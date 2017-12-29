@@ -3,7 +3,7 @@
 
 define(function (require) {
 
-	var MathExt = require("common/MathExt");
+	var MathExt = require("MathExt");
 
     function Vector2(x, y) {
 	    this.x = x;

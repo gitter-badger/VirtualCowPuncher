@@ -4,7 +4,7 @@
 
 define(function (require) {
 
-	var MathExt = require("common/MathExt");
+	var MathExt = require("MathExt");
 			
 	function Vector3(xOrVec /*float*/, y /*float*/, z /*float*/) {
 		if (xOrVec && xOrVec.x !== undefined) {
