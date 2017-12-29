@@ -5,10 +5,10 @@
 define(function (require)  {
     
    var Canvas2D = require('Canvas2D');
-	var GCoord = require('GCoord');
-	var Vector2 = require('Vector2');
-	var MathExt = require('MathExt');
-	var CPObject = require('CPObject');
+	var GCoord = require('common/GCoord');
+	var Vector2 = require('common/Vector2');
+	var MathExt = require('common/MathExt');
+	var CPObject = require('common/CPObject');
 
    function Scene (canvasElement /* DOMElement */, outputElement /* opt, DOMElement */) {
 	   

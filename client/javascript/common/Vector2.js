@@ -1,9 +1,11 @@
 ﻿////////////////////////////////////////////////////////////////
 // Vector2 - a 2D vector
 
+if (typeof define !== 'function') { var define = require('amdefine')(module) }
+
 define(function (require) {
 
-	var MathExt = require("MathExt");
+	var MathExt = require("common/MathExt");
 
     function Vector2(x, y) {
 	    this.x = x;

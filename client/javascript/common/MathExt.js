@@ -1,5 +1,7 @@
 ﻿// MathExt: An extension of the generic Javascript Math library.
 
+if (typeof define !== 'function') { var define = require('amdefine')(module) }
+
 define({
 
 	radToDeg: function (rad) { return rad * 57.2957795; },

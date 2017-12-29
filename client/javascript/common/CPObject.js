@@ -2,9 +2,11 @@
 // CPObject.js
 // - A base class for all objects in the scene
 
+if (typeof define !== 'function') { var define = require('amdefine')(module) }
+
 define(function (require)  {
 
-	var Vector2 = require("Vector2");
+	var Vector2 = require("common/Vector2");
     
 	function CPObject () {
 		this.position = new Vector2();		//  XY position of the object

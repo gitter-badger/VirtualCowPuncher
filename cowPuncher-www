@@ -8,10 +8,13 @@
 var app = require('./app');
 var debug = require('debug')('CowPuncher:server');
 var http = require('http');
-var game = require('./game/server_game');
+var game = require('./server/server_game');
 //var http = require('http');
 var https = require('https');
 var fs = require('fs');
+
+var MathExt = require('./client/javascript/common/MathExt');
+console.log(MathExt.radToDeg(3.14159));
 
 /**
  * Get port from environment and store in Express.
@@ -23,6 +26,7 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
+
 
 var options = {
 	key: fs.readFileSync('certs/cowpuncher.key'),

@@ -2,9 +2,11 @@
 ////////////////////////////////////////////////////////////////
 // Vector3
 
+if (typeof define !== 'function') { var define = require('amdefine')(module) }
+
 define(function (require) {
 
-	var MathExt = require("MathExt");
+	var MathExt = require("common/MathExt");
 			
 	function Vector3(xOrVec /*float*/, y /*float*/, z /*float*/) {
 		if (xOrVec && xOrVec.x !== undefined) {

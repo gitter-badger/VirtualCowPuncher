@@ -3,11 +3,12 @@
 // Matrix math.  Based on examples in WebGL: Programming Guide.
 // Generally works for Vector3 and Vector2.
 
+if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
 define(function (require) {
 
-    var Vector3 = require("./Vector3");
-    var MathExt = require("./MathExt");
+    var Vector3 = require("common/Vector3");
+    var MathExt = require("common/MathExt");
 	
 	function Matrix() {
 		// Set to identity
