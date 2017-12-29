@@ -4,11 +4,11 @@
 
 define(function (require)  {
     
-   var Canvas2D = require('Canvas2D');
-	var GCoord = require('common/GCoord');
-	var Vector2 = require('common/Vector2');
-	var MathExt = require('common/MathExt');
-	var CPObject = require('common/CPObject');
+   var Canvas2D = require('canvas2d');
+	var GCoord = require('common/gcoord');
+	var Vector2 = require('common/vector2');
+	var MathExt = require('common/math-ext');
+	var CPObject = require('common/cp-object');
 
    function Scene (canvasElement /* DOMElement */, outputElement /* opt, DOMElement */) {
 	   

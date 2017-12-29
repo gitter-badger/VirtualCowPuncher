@@ -7,8 +7,8 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
 define(function (require) {
 
-    var Vector3 = require("common/Vector3");
-    var MathExt = require("common/MathExt");
+    var Vector3 = require("common/vector3");
+    var MathExt = require("common/math-ext");
 	
 	function Matrix() {
 		// Set to identity

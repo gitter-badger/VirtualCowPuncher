@@ -6,9 +6,9 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
 define(function (require) {
 
-	var Vector2 = require("common/Vector2");
-	var Vector3 = require("common/Vector3");
-	var MathExt = require("common/MathExt");
+	var Vector2 = require("common/vector2");
+	var Vector3 = require("common/vector3");
+	var MathExt = require("common/math-ext");
 
 	function GCoord(lat, long) {
 		this.lat = lat;

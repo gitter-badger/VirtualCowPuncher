@@ -13,8 +13,6 @@ var game = require('./server/server_game');
 var https = require('https');
 var fs = require('fs');
 
-var MathExt = require('./client/javascript/common/MathExt');
-console.log(MathExt.radToDeg(3.14159));
 
 /**
  * Get port from environment and store in Express.

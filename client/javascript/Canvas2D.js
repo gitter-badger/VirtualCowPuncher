@@ -1,8 +1,8 @@
 ﻿define(function (require) {
 	
-	var Vector2 = require("common/Vector2");
-	var Vector3 = require("common/Vector3");
-	var Matrix = require("common/Matrix");
+	var Vector2 = require("common/vector2");
+	var Vector3 = require("common/vector3");
+	var Matrix = require("common/matrix");
 
    function Canvas2D(canvasElement) {
 
