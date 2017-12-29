@@ -7,9 +7,12 @@ define(function (require)  {
    var Canvas2D = require('Canvas2D');
 	var GCoord = require('GCoord');
 	var Vector2 = require('Vector2');
+	var MathExt = require('MathExt');
 
    function Scene (canvasElement /* DOMElement */, outputElement /* opt, DOMElement */) {
 	   
+		this.scale = 1.0;		// XY Units per foot.
+
 		this.canvas = new Canvas2D(canvasElement);
 		this.canvas.setProjection(0, 0, 1 /*ppunit */, true /* invertY */);
 		
@@ -23,6 +26,36 @@ define(function (require)  {
    }
 
 	/* --- GPS Functionality ----------  */
+	var gCoordUtil = new GCoord();		// so it has something allocated already.
+
+	
+	Scene.prototype.gCoordToXY = function (gCoord /* GCoord */, result /* opt, out */) {
+		return gCoord.toXYPoint(10000 /* mapHeight */);		// Do not change the map height from 10000.  It is the scale we will use for all.
+	}
+
+	Scene.prototype.gCoordToXY2 = function (lat, long, result /* opt, out */) {
+		gCoordUtil.set(lat, long);
+		return gCoordUtil.toXYPoint(10000 /* mapHeight */, result);   // Do not change the map height from 10000.  It is the scale we will use for all.
+	}
+
+	Scene.prototype.feetToXY = function (feet) {
+		return feet * this.scale;
+	}
+
+	Scene.prototype.XYToFeet = function (xy) {
+		return feet / this.scale;
+	}
+
+	// Finds the feet To XY conversion at this latitude.
+	Scene.prototype.findScale = function (latitude) {
+		var g1 = new GCoord(latitude - 0.01, 0);
+		var g2 = new GCoord(latitude + 0.01, 0);
+		var distance = MathExt.degToFeet(0.02);
+		var p1 = this.gCoordToXY(g1);
+		var p2 = this.gCoordToXY(g2);
+		this.scale = p1.distance(p2) / distance;
+	}
+
 
 	Scene.prototype.onHavePosition = function (position) {
 		var lat = position.coords.latitude;
@@ -30,8 +63,7 @@ define(function (require)  {
 		if (this.output)
 			this.output.innerHTML = "Lat: " + lat + ", Long: " + long + ", Alt: " + position.coords.altitude + ", Acc: " + position.coords.accuracy + "<br>";
 
-		gCoord = new GCoord(lat, long);
-		gCoord.toXYPoint(this.playerPosition);
+		this.gCoordToXY2(lat, long, this.playerPosition);
 
 		var needsUpdate = false;
 		if (this.maxX < this.playerPosition.x) { this.maxX = this.playerPosition.x;  needsUpdate = true; }
@@ -40,7 +72,7 @@ define(function (require)  {
 		if (this.minY > this.playerPosition.x) { this.minY = this.playerPosition.y;  needsUpdate = true; }
 	
 		if (needsUpdate) {
-			var ppu = this.canvas.height / Math.max(0.00001, Math.max(this.maxX - this.minX, this.maxY - this.minY));	// pixels per unit
+			var ppu = this.canvas.height / Math.max(this.feetToXY(30), Math.max(this.maxX - this.minX, this.maxY - this.minY));	// pixels per unit
 			ppu *= 0.9;  // Provide some margin in the view.
 			this.canvas.setProjection((this.minX + this.maxX)  / 2, (this.minY + this.maxY) / 2, ppu, true);
 		}

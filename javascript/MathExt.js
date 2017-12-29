@@ -5,6 +5,10 @@ define({
 	radToDeg: function (rad) { return rad * 57.2957795; },
 	degToRad: function (deg) { return deg / 57.2957795; },
 
+	// approximate degrees of latitude the passed number of feet represent on the earth.
+	feetToDeg: function (feet) { return feet / 5280 / 69.0; },
+	degToFeet: function (deg)  { return deg * 69.0 * 5280;  },
+
 	/* passed in 3 points on a triangle */
 	normal: function (a, b, c) {
 		var ba = b.subc(a);
