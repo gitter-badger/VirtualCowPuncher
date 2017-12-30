@@ -5,7 +5,7 @@
 	<script>
 		//var socket = io();
 	
-      var scene = null;       // The main Scene object
+      var controller = null;       // The main Scene object
 		function onLoad() {
          requirejs.config({
 				baseUrl: './javascript',
@@ -14,16 +14,20 @@
 				}
 			});
 
-			require(['scene'], function (Scene) {
+			require(['game-controller'], function (GameController) {
 			   canvas = document.getElementById('locationCanvas');
 				var dim = Math.min(screen.availWidth, screen.availHeight) - 50;
 				canvas.style.width = dim + "px";
 				canvas.style.height = dim + "px";
 
 				var output = document.getElementById('output');
-				this.scene = new Scene(canvas, output);
+				this.controller = new GameController(canvas, output);
           });   
 			 
+		}
+
+		function onAddFencepost() {
+			this.scene.addFencepost();
 		}
 
 	</script>
@@ -31,6 +35,6 @@
 	GPS TEST BODY!
 
 	<div id='output'></div>
-	<input type='button' name='Add Fencepost'>
+	<input type='button' name='Add Fencepost' onclick='onAddFencepost();' />
 	<canvas id='locationCanvas' width=600 height=600></canvas>
 

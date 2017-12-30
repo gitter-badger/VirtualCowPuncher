@@ -15,8 +15,8 @@ define(function (require)  {
 	   
 		this.output = outputElement;
 
-		var gameState = new GameState();
-		var gameDisplay = new GameDisplay(canvasElement);
+		this.gameState = new GameState();
+		this.gameDisplay = new GameDisplay(canvasElement);
 		
 		this.currentLocation = new Vector2();		// In XY Coordinates.
 		this.scale = 1.0;		// XY Units per foot.
@@ -63,16 +63,16 @@ define(function (require)  {
 		if (this.output)
 			this.output.innerHTML = "Lat: " + lat + ", Long: " + long + ", Alt: " + position.coords.altitude + ", Acc: " + position.coords.accuracy + "<br>";
 
-		this.gCoordToXY2(lat, long, this.player.position)
+		this.gCoordToXY2(lat, long, this.gameState.playerPosition)
 
 		
-		if (needsUpdate) {
-			var ppu = this.canvas.height / Math.max(this.feetToXY(30), Math.max(this.maxX - this.minX, this.maxY - this.minY));	// pixels per unit
-			ppu *= 0.9;  // Provide some margin in the view.
-			this.canvas.setProjection((this.minX + this.maxX)  / 2, (this.minY + this.maxY) / 2, ppu, true);
-		}
+		//if (needsUpdate) {
+			//var ppu = this.canvas.height / Math.max(this.feetToXY(30), Math.max(this.maxX - this.minX, this.maxY - this.minY));	// pixels per unit
+			//	ppu *= 0.9;  // Provide some margin in the view.
+		//	this.canvas.setProjection((this.minX + this.maxX)  / 2, (this.minY + this.maxY) / 2, ppu, true);
+		//}
+		this.gameDisplay.draw(this.gameState);
 		
-		this.redraw();
 	}
 
 	GameController.prototype.onPositionError = function (error) {

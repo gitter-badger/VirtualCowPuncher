@@ -5,6 +5,7 @@
 define (function (require) {
 
 	var GameState = require('common/game-state');
+	var Canvas2D = require('canvas2d');
 
 	function GameDisplay(canvasElement) {
 		this.canvas = new Canvas2D(canvasElement);
