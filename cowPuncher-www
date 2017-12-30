@@ -9,7 +9,6 @@ var app = require('./app');
 var debug = require('debug')('CowPuncher:server');
 var http = require('http');
 var game = require('./server/server_game');
-//var http = require('http');
 var https = require('https');
 var fs = require('fs');
 
