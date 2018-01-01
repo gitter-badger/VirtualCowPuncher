@@ -18,7 +18,7 @@ define(function (require) {
 
 	GameState.prototype.setPlayerPosition = function (position /* Vector2 */) {
 		this.playerPosition.set(position);
-		bbox.addPoint(position);
+		this.bbox.addPoint(position);
 	}
 
 

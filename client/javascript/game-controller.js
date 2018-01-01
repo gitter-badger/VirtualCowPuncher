@@ -63,8 +63,8 @@ define(function (require)  {
 		if (this.output)
 			this.output.innerHTML = "Lat: " + lat + ", Long: " + long + ", Alt: " + position.coords.altitude + ", Acc: " + position.coords.accuracy + "<br>";
 
-		this.gCoordToXY2(lat, long, this.gameState.playerPosition)
-
+		var position = this.gCoordToXY2(lat, long);
+		this.gameState.setPlayerPosition(position);
 		
 		//if (needsUpdate) {
 			//var ppu = this.canvas.height / Math.max(this.feetToXY(30), Math.max(this.maxX - this.minX, this.maxY - this.minY));	// pixels per unit
