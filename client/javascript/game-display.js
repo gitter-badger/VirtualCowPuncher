@@ -28,9 +28,17 @@ define (function (require) {
 		this.canvas.clear('rgb(230, 230, 230)');
 
 		// Draw all elements of the state.
-		var playerPos = state.playerPosition;
-		this.canvas.drawCircle(playerPos.x, playerPos.y, this.canvas.pixelsToUnits(10) /* radius */, 'rgb(0, 0, 255)', 'rgb(0, 0, 0)');
-	}
+		//var playerPos = state.playerPosition;
+		//this.canvas.drawCircle(playerPos.x, playerPos.y, this.canvas.pixelsToUnits(10) /* radius */, 'rgb(0, 0, 255)', 'rgb(0, 0, 0)');
+		for(var i in state.objects){
+			state.objects[i].draw(this.canvas);
+		}
+
+		//for(var i in state.walls){
+		//	state.walls[i].draw(this.canvas);
+		//}
+
+	};
 
 
 	return GameDisplay;

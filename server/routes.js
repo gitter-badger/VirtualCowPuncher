@@ -9,12 +9,16 @@ router.get('/cowPuncher', function (req, res) {
 	res.render("home", {"message": "Cow Puncher!!"});
 });
 
-router.get('/gps', function (req, res) {
-	res.render("gps", {"message": "GPS Test!"});
+router.get('/player', function (req, res) {
+	res.render("player", {"message": "!"});
 });
 
 router.get('/admin', function (req, res) {
 	res.render("admin", {"message": "Cowpuncher admin page!"});
+});
+
+router.get('/gps', function (req, res) {
+	res.render("gps", {"message": "testing!"});
 });
 
 module.exports = router;
