@@ -7,8 +7,8 @@ if (typeof define !== 'function') {
 
 define(function (require) {
 
-	var BBox = require('common/BBox');
-	var Vector2 = require('common/Vector2');
+	var BBox = require('common/bbox');
+	var Vector2 = require('common/vector2');
 
 	function GameState() {
 
