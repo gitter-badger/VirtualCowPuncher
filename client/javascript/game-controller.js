@@ -41,6 +41,7 @@ define(function (require) {
 
 	// Callback for the location services.  Coord is an xy coord with a z of altitude.
 	var queries = 0;
+
 	GameController.prototype._onLocation = function (pos /* Vector2 */, errMsg) {
 		if (errMsg) {
 			if (this.output)
@@ -55,20 +56,22 @@ define(function (require) {
 		if (this.output) {
 			this.output.innerHTML = "X: " + pos.x + ", Y: " + pos.y + ", Alt: " + pos.altitude + ", Acc: " + Location.accuracy + "<br>";
 		}
+		this.gameState.setPlayerPosition(pos);
+		if (this.output) {
+			this.output.innerHTML = "queries: " + queries++ +
+				"<br>X: " + pos.x +
+				"<br>Y: " + pos.y + "<br>Alt: " + pos.altitude +
+				"<br>Scale: " + Location.getScale() +
+				"<br>Acc: " + Location.accuracy + "<br>";
+		}
+
 	};
 
-		this.gameState.setPlayerPosition(pos);
-		if (this.output)
-			this.output.innerHTML = "queries: " + queries++ +
-											"<br>X: " + pos.x +
-											"<br>Y: " + pos.y + "<br>Alt: " + pos.altitude +
-											"<br>Scale: " + Location.getScale() +
-											"<br>Acc: " + Location.accuracy + "<br>";
-	}
 
 	GameController.prototype._onDraw = function () {
 		this.gameDisplay.draw(this.gameState);
 	};
 
 	return GameController;
-});
+})
+;
