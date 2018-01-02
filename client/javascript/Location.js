@@ -8,16 +8,20 @@ define(function (require)  {
 	var MathExt = require("common/math-ext");
 	
 	var Location = {	
-		_mapHeight: 1000,		// Size of the mercator projected map if it were the world.  So our world size is a small porition of that.
+		// Size of the mercator projected map if it were the world.  So our world size is a small porition of that.
+		// A map height of 15,000,000 results in approximately 1xy in 1 meter at 42 degrees north.
+		_mapHeight: 15000000,
 		accuracy: 999,			// The accuracy of the last returned position that was polled.
+		latitude: 99999,		// The latitude of the last returned position that was polled.
 		
 		// Returns the number of feet per XY at the passed latitude.
 		getScale: function (latitude) {
+			if (!latitude) latitude = this.latitude;
 			var g1 = new GCoord(latitude - 0.01, 0);
 			var g2 = new GCoord(latitude + 0.01, 0);
 			var distance = MathExt.degToFeet(0.02);
-			var p1 = this.gCoordToXY(g1);
-			var p2 = this.gCoordToXY(g2);
+			var p1 = this.coordToXY(g1);
+			var p2 = this.coordToXY(g2);
 			var scale = p1.distance(p2) / distance;
 			return scale;
 		},
@@ -59,6 +63,7 @@ define(function (require)  {
 				navigator.geolocation.getCurrentPosition(
 					function (position) {  
 						self.accuracy = position.coords.accuracy;
+						self.latitude = position.coords.latitude;
 						callback(position);
 					},
 					function (error)    {
