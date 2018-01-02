@@ -1,5 +1,5 @@
 ﻿// Copyright VCP 2017
-// Location.js
+// location.js
 // - Functionality for recieving location information from the system.  May be GPS or something less accurate.
 
 define(function (require)  {
