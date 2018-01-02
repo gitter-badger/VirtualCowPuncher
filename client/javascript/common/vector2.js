@@ -5,7 +5,7 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
 define(function (require) {
 
-	var MathExt = require("common/math-ext");
+	var MathExt = require("./math-ext");
 
     function Vector2(x, y) {
 	    this.x = x;

@@ -6,7 +6,7 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
 define(function (require) {
 
-	var Vector2 = require("common/vector2");
+	var Vector2 = require("./vector2");
 
 	function BBox(p1, p2) {
 		this.min = { x: 1e8, y: 1e8};

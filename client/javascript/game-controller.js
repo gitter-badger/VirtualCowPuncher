@@ -12,7 +12,7 @@ define(function (require) {
 
 	function GameController(canvasElement /* DOMElement */, outputElement /* opt, DOMElement */) {
 
-		this.my_id = Math.round(Math.random() * 1000000); // TODO: Change this to be unique
+		this.my_id = -1;// = Math.round(Math.random() * 1000000); // TODO: Change this to be unique
 		this.output = outputElement;
 
 		this.gameState = new GameState();
@@ -23,10 +23,17 @@ define(function (require) {
 		var self = this;
 
 		this.socket = io();
+
+		this.socket.on('assign_id', function(assigned_id){
+			self.my_id = assigned_id["id"];
+		});
+
 		this.socket.on("game_state", function (state) {
+			console.log("state: ");
 			console.log(state);
 			self.gameState.updateFromJSON(state);
 		});
+
 
 		this.locationTimerID = setInterval(function () {
 			Location.getXYLocation(function (pos, errMsg) {
@@ -53,10 +60,12 @@ define(function (require) {
 		this.socket.emit("player_moved", {'id': this.my_id, 'x': pos.x, 'y': pos.y});
 
 		this.gameState.moveObject(pos); // TODO
+
 		if (this.output) {
 			this.output.innerHTML = "X: " + pos.x + ", Y: " + pos.y + ", Alt: " + pos.altitude + ", Acc: " + Location.accuracy + "<br>";
 		}
-		this.gameState.setPlayerPosition(pos);
+
+
 		if (this.output) {
 			this.output.innerHTML = "queries: " + queries++ +
 				"<br>X: " + pos.x +

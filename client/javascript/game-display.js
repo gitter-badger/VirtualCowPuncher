@@ -19,7 +19,7 @@ define (function (require) {
 		var ppu = this.canvas.height / Math.max(0.01, Math.max(bbox.max.x - bbox.min.x, bbox.max.y - bbox.min.y));	// pixels per unit
 		ppu *= 0.9;  // Zoom out to provide some margin in the view.
 		this.canvas.setProjection((bbox.min.x + bbox.max.x)  / 2, (bbox.min.y + bbox.max.y) / 2, ppu, true);
-	},
+	};
 
 	GameDisplay.prototype.draw = function (state /* GameState */) {
 		this.updateProjection(state);
@@ -31,7 +31,12 @@ define (function (require) {
 		//var playerPos = state.playerPosition;
 		//this.canvas.drawCircle(playerPos.x, playerPos.y, this.canvas.pixelsToUnits(10) /* radius */, 'rgb(0, 0, 255)', 'rgb(0, 0, 0)');
 		for(var i in state.objects){
-			state.objects[i].draw(this.canvas);
+			console.log("!!");
+			console.log(state.objects[i]);
+			//if(state.objects[i]['position']) {
+				this.canvas.drawCircle(state.objects[i].position['x'], state.objects[i].position['y'], this.canvas.pixelsToUnits(10) /* radius */, 'rgb(60, 60, 255)', 'rgb(150, 150, 150)');
+			//}
+			//state.objects[i].draw(this.canvas);
 		}
 
 		//for(var i in state.walls){
