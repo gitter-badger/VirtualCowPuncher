@@ -1,4 +1,4 @@
-﻿// Copywrite VCP 2017
+﻿// Copyright VCP 2017
 // CPObject.js
 // - A base class for all objects in the scene
 

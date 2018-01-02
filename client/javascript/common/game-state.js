@@ -13,16 +13,13 @@ define(function (require) {
 		this.playerPosition = new Vector2();
 
 		this.bbox = new BBox();
-		
 	}
+
 
 	GameState.prototype.setPlayerPosition = function (position /* Vector2 */) {
 		this.playerPosition.set(position);
 		this.bbox.addPoint(position);
 	}
-
-
-
 
 
 	return GameState;

@@ -75,18 +75,6 @@ define(function (require) {
 		return vec;
 	};
 
-	// Convert to a standardized xy point.  Uses mercator projection.
-	// .https://stackoverflow.com/questions/14329691/convert-latitude-longitude-point-to-a-pixels-x-y-on-mercator-projection
-	GCoord.prototype.toXYPoint = function (mapHeight, result /* opt out */) {
-		var vec = result ? result : new Vector2();
-		var mapWidth = mapHeight * 2.0;
-
-		vec.x = (this.long + 360 % 360) / 360 * mapWidth;	// 0 - 2.
-		var mercLat = Math.log(Math.tan(Math.PI / 4.0 + (MathExt.degToRad(this.lat) / 2.0)));
-		vec.y = (mapHeight * 0.5) - (mapWidth * mercLat / (2.0 * Math.PI)); // 0 - 1.
-		
-		return vec;
-	}
 
 	// returns Vec2 of the mapping to a polar coordinate where the center is the north pole.
 	// .https://en.wikipedia.org/wiki/Azimuthal_equidistant_projection
