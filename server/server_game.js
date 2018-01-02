@@ -1,114 +1,77 @@
 var State = require("../client/javascript/common/game-state");
-//var Cow = require("../client/javascript/common/objects/cow");
+var Cow = require("../client/javascript/common/objects/cow");
+var BBox = require("../client/javascript/common/bbox");
+var Vector2 = require("../client/javascript/common/vector2");
+var GameLogic = require("../client/javascript/common/game-logic");
 
-exports.initialize = function initialize(io){
-	//
-	//var squareSize = 20;
-	//var boardSize = 600;
-	//var squaresAcross = boardSize / squareSize;
-	//
-	//function randomCoordinate() {
-	//	return Math.floor((Math.random() * squaresAcross));
-	//}
+
+function randomLocation(bbox) {
+	var x = bbox.min.x + Math.random() * (bbox.max.x - bbox.min.x);
+	var y = bbox.min.y + Math.random() * (bbox.max.y - bbox.min.y);
+	//console.log('****');
+	//console.log(bbox);
+	//console.log(x);
+	//console.log(y);
+	return new Vector2(x, y);
+}
+
+function new_uuid(state){
+	var temp_id = null;
+	while(temp_id === null || temp_id in state.objects){
+		temp_id = random_id(6);
+	}
+	return temp_id;
+}
+
+function random_id(token_length) {
+	var length = token_length || 6;
+	var alphabet = '0123456789abcdef';
+	var token = 'o_';
+	for (var i = 0; i < length; i++) {
+		token += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+	}
+	return token;
+}
+
+
+exports.initialize = function initialize(io) {
 
 	var game_state = new State();
 
-	//var number_of_cows = 20;
-	//var cows = [];
-	//var too_close = 5;
+	var number_of_cows = 20;
 	//for (var q = 0; q < number_of_cows; q++) {
-	//	cows.push([randomCoordinate(), randomCoordinate()]);
+	//	game_state.addObject(new_uuid(game_state), 'cow', randomLocation(game_state.bbox));
 	//}
-	//var locations = {};
+
 
 	io.on('connection', function (socket) {
-		console.log('a user connected');
-		var clientID = Math.round(Math.random() * 1000000); // TODO: Change this to be unique
-		socket.emit('assign_id', {'id':clientID});
-
-		game_state.addObject(clientID, 'player');
+		var clientID = new_uuid(game_state);
+		console.log('User ' + clientID + ' connected');
+		socket.emit('assign_id', {'id': clientID});
+		game_state.addObject(clientID, 'player', {'x': game_state.bbox.min.x, 'y': game_state.bbox.min.y});
 
 		socket.on('disconnect', function () {
-			console.log('user disconnected');
+			console.log('User ' + clientID + ' disconnected');
 			game_state.removeObject(clientID);
 		});
 
 
 		socket.on('player_moved', function (location) {
-			//this.socket.emit("player_moved", {'id': this.my_id, 'x': pos.x, 'y': pos.y});
-			console.log("player_moved: ");
-			console.log(location);
-			//clientID = location['id'];
-
-			game_state.moveObject(location['id'], {'x':location['x'], 'y':location['y']});
-			//locations[location['id']] = {'y': location['x'], 'x': location['y']};
-			//io.emit('locations', locations);
-
-			console.log("state: ");
-			console.log(game_state);
-
-			io.emit('game_state', game_state.to_json());
-
-			//for(var cow in cows){
-			//	var this_cow = cows[cow];
-			//	var x = movement['x'];
-			//	var y = movement['y'];
-			//	var diff_x = Math.abs(this_cow[0] - x);
-			//	var diff_y = Math.abs(this_cow[1] - y);
-			//	var diff = diff_x + diff_y;
-			//	if(diff < too_close){
-			//		if(diff_x > diff_y){
-			//			if(this_cow[0] > x){
-			//				this_cow[0] = this_cow[0] + 1;
-			//			}else{
-			//				this_cow[0] = this_cow[0] - 1;
-			//			}
-			//		}else{
-			//			if(this_cow[1] > y){
-			//				this_cow[1] = this_cow[1] + 1;
-			//			}else{
-			//				this_cow[1] = this_cow[1] - 1;
-			//			}
-			//		}
-			//	}
-			//io.emit('cow_locations', cows);
+			if(!game_state.objects[location['id']]){
+				console.log("player not registered: " + location['id']);
+			}else {
+				//console.log(location);
+				//console.log(Object.keys(game_state.objects).length);
+				game_state.moveObject(location['id'], {'x': location['x'], 'y': location['y']});
+				if (Object.keys(game_state.objects).length < number_of_cows) {
+					//for (var q = 0; q < number_of_cows; q++) {
+					game_state.addObject(new_uuid(game_state), 'cow', randomLocation(game_state.bbox));
+					//}
+				}
+				io.emit('game_state', game_state.to_json());
+			}
 		});
 
-
-		//socket.on('move', function (movement) {
-		//	console.log(movement);
-		//	clientID = movement['id'];
-		//	locations[movement['id']] = {'x': movement['x'], 'y': movement['y']};
-		//	io.emit('locations', locations);
-		//
-		//	for(var cow in cows){
-		//		var this_cow = cows[cow];
-		//		var x = movement['x'];
-		//		var y = movement['y'];
-		//		var diff_x = Math.abs(this_cow[0] - x);
-		//		var diff_y = Math.abs(this_cow[1] - y);
-		//		var diff = diff_x + diff_y;
-		//		if(diff < too_close){
-		//			if(diff_x > diff_y){
-		//				if(this_cow[0] > x){
-		//					this_cow[0] = this_cow[0] + 1;
-		//				}else{
-		//					this_cow[0] = this_cow[0] - 1;
-		//				}
-		//			}else{
-		//				if(this_cow[1] > y){
-		//					this_cow[1] = this_cow[1] + 1;
-		//				}else{
-		//					this_cow[1] = this_cow[1] - 1;
-		//				}
-		//			}
-		//		}
-		//	}
-		//
-		//	io.emit('cow_locations', cows);
-		//
-		//
-		//});
 
 	});
 

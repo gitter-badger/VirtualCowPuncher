@@ -51,15 +51,16 @@ define(function (require) {
 
 	GameController.prototype._onLocation = function (pos /* Vector2 */, errMsg) {
 		if (errMsg) {
-			if (this.output)
+			if (this.output) {
 				this.output.innerHTML = errMsg;
+			}
 			clearInterval(this.locationTimerID);
 			return;
 		}
 
 		this.socket.emit("player_moved", {'id': this.my_id, 'x': pos.x, 'y': pos.y});
 
-		this.gameState.moveObject(pos); // TODO
+		this.gameState.moveObject(this.my_id, pos); // TODO
 
 		if (this.output) {
 			this.output.innerHTML = "X: " + pos.x + ", Y: " + pos.y + ", Alt: " + pos.altitude + ", Acc: " + Location.accuracy + "<br>";

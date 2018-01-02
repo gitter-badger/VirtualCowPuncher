@@ -3,8 +3,8 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
 define(function (require) {
 
-	var CPObject = require("common/cp-object");
-	var FleeBehavior = require("common/cp-object");
+	var CPObject = require("../cp-object");
+	var FleeBehavior = require("./behaviors/flee-behavior");
 
 	function Cow(fleeDistance) {
 		this.behaviors.push(new FleeBehavior(5));
@@ -19,5 +19,5 @@ define(function (require) {
 
 
 
-	return Vector2;
+	return Cow;
 });

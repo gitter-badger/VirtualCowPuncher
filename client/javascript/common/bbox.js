@@ -20,7 +20,7 @@ define(function (require) {
 
 	BBox.prototype.isValid = function () {
 		return this.min.x <= this.max.x;
-	}
+	};
 
 	BBox.prototype.addPoint = function (p /* Vector2 */) {
 		if (p.x < this.min.x) this.min.x = p.x;
@@ -47,12 +47,12 @@ define(function (require) {
 			 && p.x <= this.max.x
 			 && p.y >= this.min.y
 			 && p.y <= this.max.y
-	}
+	};
 
 	BBox.prototype.clear = function() {
 		this.min.x = this.min.y = 1e8;
 		this.max.x = this.max.y = -1e8;
-	}
+	};
 
 	//var il_range1 = new Range();    // Because this function will be called often, it can save time by declaring these as global.
 	//var il_range2 = new Range();

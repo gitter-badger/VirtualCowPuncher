@@ -31,8 +31,6 @@ define (function (require) {
 		//var playerPos = state.playerPosition;
 		//this.canvas.drawCircle(playerPos.x, playerPos.y, this.canvas.pixelsToUnits(10) /* radius */, 'rgb(0, 0, 255)', 'rgb(0, 0, 0)');
 		for(var i in state.objects){
-			console.log("!!");
-			console.log(state.objects[i]);
 			//if(state.objects[i]['position']) {
 				this.canvas.drawCircle(state.objects[i].position['x'], state.objects[i].position['y'], this.canvas.pixelsToUnits(10) /* radius */, 'rgb(60, 60, 255)', 'rgb(150, 150, 150)');
 			//}
