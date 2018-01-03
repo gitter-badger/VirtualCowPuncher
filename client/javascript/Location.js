@@ -11,12 +11,30 @@ define(function (require)  {
 		// Size of the mercator projected map if it were the world.  So our world size is a small porition of that.
 		// A map height of 15,000,000 results in approximately 1xy in 1 meter at 42 degrees north.
 		_mapHeight: 15000000,
-		accuracy: 999,			// The accuracy of the last returned position that was polled.
-		latitude: 99999,		// The latitude of the last returned position that was polled.
+		position: null,		// The last recieved position
+
+		startPolling: function (callback) {
+			var self = this;
+			navigator.geolocation.watchPosition(
+				function (position) {	self.position = position;  if (callback) callback(); },		// successCallback
+				function (error)    {	console.log("Geolocation error: " + self.translateErrorMessage(error)); },
+				{ enableHighAccuracy: true,
+				  timeout: 100,
+				  maximumAge: 0 });		// Request high accuracy mode from the device, which the device generally does not use to save power.
+		},
+
+		stopPolling: function () {
+			navigator.geolocation.clearWatch();
+		},
+
+		getAccuracy: function () {
+			return position ? position.coords.accuracy : null;
+		},
 		
 		// Returns the number of feet per XY at the passed latitude.
 		getScale: function (latitude) {
-			if (!latitude) latitude = this.latitude;
+			if (!latitude) latitude = (this.position ? this.position.coords.latitude : null);
+			if (!latitude) return;
 			var g1 = new GCoord(latitude - 0.01, 0);
 			var g2 = new GCoord(latitude + 0.01, 0);
 			var distance = MathExt.degToFeet(0.02);
@@ -41,48 +59,49 @@ define(function (require)  {
 
 		// Get the location from the device as an XY coordinate with an altitude value.
 		getXYLocation: function (callback /* function (vector2, errMsg) */) {
-			var self = this;
-			this.getLocation(function (position, errMsg) {
-				if (!errMsg) {
-					var gCoord = new GCoord(position.coords.latitude, position.coords.longitude);
-					var xy = self.coordToXY(gCoord);
-					xy.altitude = position.coords.altitude;
-					callback(xy);
-				}
-				else {
-					callback(null, errMsg);
-				}
-			});
+			if (!this.position)
+				return null;
+
+			var gCoord = new GCoord(this.position.coords.latitude, this.position.coords.longitude);
+			var xy = this.coordToXY(gCoord);
+			xy.altitude = this.position.coords.altitude;
+			return xy;
 		},
 
 		// Get the current location services available on the device. 
 		// position: { coords: { latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, speed }, timestamp }}
 		getLocation: function (callback /* function (position, error) */) {
-			if (navigator.geolocation) {
-				var self = this;
-				navigator.geolocation.getCurrentPosition(
-					function (position) {  
-						self.accuracy = position.coords.accuracy;
-						self.latitude = position.coords.latitude;
-						callback(position);
-					},
-					function (error)    {
-						var msg = null;
-						switch(error.code) {
-							case error.PERMISSION_DENIED:		msg = "User denied the request for Geolocation.";	break;
-							case error.POSITION_UNAVAILABLE:	msg = "Location information is unavailable. " + error.message;	break;
-							case error.TIMEOUT:					msg = "The request to get user location timed out.";	break;
-							case error.UNKNOWN_ERROR:			msg = "An unknown error occurred.";			break;
-						}
-						console.log("Geolocation Error: " + msg);
-						callback(null, msg);
-					},
-					{ enableHighAccuracy: true });		// Request high accuracy mode from the device, which the device generally does not use to save power.
-			} 
-			else {
-				console.log('Geolocation is not supported by this browser');
+			return this.position;
+			//if (navigator.geolocation) {
+			//	var self = this;
+			//	navigator.geolocation.getCurrentPosition(
+			//		function (position) {  
+			//			self.accuracy = position.coords.accuracy;
+			//			self.latitude = position.coords.latitude;
+			//			callback(position);
+			//		},
+			//		function (error)    {
+			//			var msg = self.translateErrorMessage(error);
+			//			callback(null, msg);
+			//		},
+			//		{ enableHighAccuracy: true });		// Request high accuracy mode from the device, which the device generally does not use to save power.
+			//} 
+			//else {
+			//	console.log('Geolocation is not supported by this browser');
+			//}
+		},
+
+		translateErrorMessage: function (error) {
+			switch(error.code) {
+				case error.PERMISSION_DENIED:		return "User denied the request for Geolocation.";	
+				case error.POSITION_UNAVAILABLE:	return "Location information is unavailable. " + error.message;
+				case error.TIMEOUT:					return "The request to get user location timed out.";
+				case error.UNKNOWN_ERROR:			return "An unknown error occurred.";			
 			}
+			return "Unknown error code.";
 		}
+
+
 	}
 
 	return Location;
