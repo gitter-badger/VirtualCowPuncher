@@ -64,7 +64,7 @@ define(function (require) {
 	    }
 	    return array;
     };
-		
+
     Vector2.prototype.toString = function (precision) {
 	    var p = precision ? precision : 4;
 	    return "X: " + this.x.toFixed(p) + "\tY: " + this.y.toFixed(p);
@@ -96,7 +96,7 @@ define(function (require) {
 	    return p.length();
     };
 
-    
+
     Vector2.prototype.dot = function (other /* Vector2 */) {
 	    return other.x * this.x + other.y * this.y;
     };
@@ -110,7 +110,7 @@ define(function (require) {
           var result = this.clone();
           result.div(this.length());
           return result;
-       }
+       };
 
        // Angle between two vec2 objects.  In radians.
        Vector2.prototype.angleBetween = function (other /* Vector2 */) {
@@ -123,7 +123,7 @@ define(function (require) {
        // The angle from (0,1) in radians.  Range = {0, 2 * PI}
        Vector2.prototype.angle = function () {
           var p = this.normalized();
-		
+
           var angle = Math.acos(p.x);	    // Returns a value between 0 and PI.
           if (p.y < 0)
 	          angle = Math.PI + (Math.PI - angle);
@@ -163,7 +163,7 @@ define(function (require) {
 	    return this;
     }
 
-    Vector2.prototype.multc = function (other /* Vector2 */) {
+    Vector2.prototype.multc = function (scalar /* Vector2 */) {
 	    return new Vector2(this.x * scalar, this.y * scalar);
     }
 
@@ -173,7 +173,7 @@ define(function (require) {
 	    return this;
     }
 
-    Vector2.prototype.divc = function (other /* Vector2 */) {
+    Vector2.prototype.divc = function (scalar /* Vector2 */) {
 	    return new Vector2(this.x * scalar, this.y * scalar);
     }
 

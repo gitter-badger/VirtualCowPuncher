@@ -3,8 +3,7 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
 define(function (require) {
 
-	var CPObject = require("common/cp-object");
-	var FleeBehavior = require("common/cp-object");
+	var CPObject = require("../cp-object");
 
 	function Player() {
 

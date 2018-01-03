@@ -29,8 +29,8 @@ define(function (require) {
 		});
 
 		this.socket.on("game_state", function (state) {
-			console.log("state: ");
-			console.log(state);
+			//console.log("state: ");
+			//console.log(state);
 			self.gameState.updateFromJSON(state);
 		});
 

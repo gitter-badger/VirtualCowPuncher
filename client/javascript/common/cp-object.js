@@ -13,9 +13,15 @@ define(function (require)  {
 		this.behaviors = [];
 	}
 
+	CPObject.prototype.toJSON = function () {
+		return JSON.stringify({'x': this.position.x, 'y': this.position.y});
+	};
+
 	CPObject.prototype.draw = function (canvas) {
 		canvas.drawCircle(this.position.x, this.position.y, canvas.pixelsToUnits(10) /* radius */, 'rgb(0, 0, 255)', 'rgb(0, 0, 0)');
 	};
+
+
 
 	return CPObject;
 });

@@ -15,9 +15,9 @@ function randomLocation(bbox) {
 	return new Vector2(x, y);
 }
 
-function new_uuid(state){
+function new_uuid(state) {
 	var temp_id = null;
-	while(temp_id === null || temp_id in state.objects){
+	while (temp_id === null || temp_id in state.objects) {
 		temp_id = random_id(6);
 	}
 	return temp_id;
@@ -37,6 +37,7 @@ function random_id(token_length) {
 exports.initialize = function initialize(io) {
 
 	var game_state = new State();
+	var game_logic = new GameLogic(); // doesn't need to be an object. All state will go in game state
 
 	var number_of_cows = 20;
 	//for (var q = 0; q < number_of_cows; q++) {
@@ -57,21 +58,23 @@ exports.initialize = function initialize(io) {
 
 
 		socket.on('player_moved', function (location) {
-			if(!game_state.objects[location['id']]){
+			if (!game_state.objects[location['id']]) {
 				console.log("player not registered: " + location['id']);
-			}else {
+			} else {
 				//console.log(location);
 				//console.log(Object.keys(game_state.objects).length);
-				game_state.moveObject(location['id'], {'x': location['x'], 'y': location['y']});
+				var vectorLocation = new Vector2(location['x'], location['y']);
+				//{'x': location['x'], 'y': location['y']}
+				game_state.moveObject(location['id'], vectorLocation);
 				if (Object.keys(game_state.objects).length < number_of_cows) {
-					//for (var q = 0; q < number_of_cows; q++) {
-					game_state.addObject(new_uuid(game_state), 'cow', randomLocation(game_state.bbox));
-					//}
+					for (var q = 0; q < number_of_cows; q++) {
+						game_state.addObject(new_uuid(game_state), 'cow', randomLocation(game_state.bbox));
+					}
 				}
+				game_logic.update(game_state);
 				io.emit('game_state', game_state.to_json());
 			}
 		});
-
 
 	});
 
