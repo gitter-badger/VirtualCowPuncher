@@ -9,26 +9,21 @@ define(function (require)  {
 	
 	var Location = {	
 		// Size of the mercator projected map if it were the world.  So our world size is a small porition of that.
-		// A map height of 15,000,000 results in approximately 1xy in 1 meter at 42 degrees north.
+		// A map height of 15,000,000 results in approximately 1xy = 1 meter at 42 degrees north.
 		_mapHeight: 15000000,
-		position: null,		// The last recieved position
+		_pollTimerId: null,
 
-		startPolling: function (callback) {
-			var self = this;
-			navigator.geolocation.watchPosition(
-				function (position) {	self.position = position;  if (callback) callback(); },		// successCallback
-				function (error)    {	console.log("Geolocation error: " + self.translateErrorMessage(error)); },
-				{ enableHighAccuracy: true,
-				  timeout: 100,
-				  maximumAge: 0 });		// Request high accuracy mode from the device, which the device generally does not use to save power.
-		},
-
-		stopPolling: function () {
-			navigator.geolocation.clearWatch();
-		},
+		// position: The last recieved position from the geolocation service.
+		// { coords: { latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, speed }, timestamp }}
+		position: null,		
 
 		getAccuracy: function () {
 			return position ? position.coords.accuracy : null;
+		},
+
+		// Get the current location services available on the device. 
+		getLocation: function (callback /* function (position, error) */) {
+			return this.position;
 		},
 		
 		// Returns the number of feet per XY at the passed latitude.
@@ -67,28 +62,48 @@ define(function (require)  {
 			xy.altitude = this.position.coords.altitude;
 			return xy;
 		},
+		
+		/* -- Geolocation functionality ------------------------  */
 
-		// Get the current location services available on the device. 
-		// position: { coords: { latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, speed }, timestamp }}
-		getLocation: function (callback /* function (position, error) */) {
-			return this.position;
-			//if (navigator.geolocation) {
-			//	var self = this;
-			//	navigator.geolocation.getCurrentPosition(
-			//		function (position) {  
-			//			self.accuracy = position.coords.accuracy;
-			//			self.latitude = position.coords.latitude;
-			//			callback(position);
-			//		},
-			//		function (error)    {
-			//			var msg = self.translateErrorMessage(error);
-			//			callback(null, msg);
-			//		},
-			//		{ enableHighAccuracy: true });		// Request high accuracy mode from the device, which the device generally does not use to save power.
-			//} 
-			//else {
-			//	console.log('Geolocation is not supported by this browser');
-			//}
+		// Start polling the geolocation.  The position will be updated when a new position is available.  
+		startPolling: function (callback) {
+			if (!navigator.geolocation) {
+				console.log("Browser does not support geolocation");
+			}
+
+			var self = this;
+			navigator.geolocation.watchPosition(
+				function (position) {	self.position = position;  if (callback) callback(); },		// successCallback
+				function (error)    {	console.log("Geolocation error: " + self.translateErrorMessage(error)); },
+				{ enableHighAccuracy: true,	// Request high accuracy mode from the device, which the device generally does not use to save power.
+				  timeout: 100,
+				  maximumAge: 0 });		
+		},
+
+		stopPolling: function () {
+			navigator.geolocation.clearWatch();
+		},
+
+		// Start polling the geolocation at a specific interval.  
+		startForcePolling: function (callback, freqPerSec) {
+			if (!navigator.geolocation) {
+				console.log("Browser does not support geolocation");
+			}
+			var self = this;
+			this._pollTimerId = setInterval(function() {
+				navigator.geolocation.getCurrentPosition(
+					function (position) {  self.position = position;  if (callback) callback(); },		// successCallback
+					function (error)    {  console.log("Geolocation error: " + self.translateErrorMessage(error));  self.stopForcePolling();  },
+					{ enableHighAccuracy: true,
+					  timeout: 100,
+					  maximumAge: 0 
+					});
+				}, 1000 / freqPerSec);
+		},
+
+		stopForcePolling: function () {
+			clearInverval(this._pollTimerId);
+		
 		},
 
 		translateErrorMessage: function (error) {
