@@ -18,8 +18,6 @@ define(function (require) {
 		this.gameState = new GameState();
 		this.gameDisplay = new GameDisplay(canvasElement);
 
-		this.scale = 1.0;		// XY Units per foot.
-
 		var self = this;
 
 		this.socket = io();
@@ -34,45 +32,34 @@ define(function (require) {
 			self.gameState.updateFromJSON(state);
 		});
 
-
-		this.locationTimerID = setInterval(function () {
-			Location.getXYLocation(function (pos, errMsg) {
-				self._onLocation(pos, errMsg);
-			});
-		}, 100);
+		//Location.startPolling(function() { self.displayLocation(); });		// use this to update location when it has changed.
+		Location.startForcePolling(function() { self._onLocation(); }, 10);		// use this to update location x times a second.
 
 		this.drawTimerID = setInterval(function () {
 			self._onDraw();
 		}, 33);
 	}
 
-	// Callback for the location services.  Coord is an xy coord with a z of altitude.
 	var queries = 0;
-
-	GameController.prototype._onLocation = function (pos /* Vector2 */, errMsg) {
-		if (errMsg) {
-			if (this.output) {
-				this.output.innerHTML = errMsg;
-			}
-			clearInterval(this.locationTimerID);
+	GameController.prototype._onLocation = function () {
+		
+		var xyLoc = Location.getXYLocation();
+		if (!xyLoc)
 			return;
-		}
 
-		this.socket.emit("player_moved", {'id': this.my_id, 'x': pos.x, 'y': pos.y});
+		this.socket.emit("player_moved", {'id': this.my_id, 'x': xyLoc.x, 'y': xyLoc.y});
 
-		this.gameState.moveObject(this.my_id, pos); // TODO
-
+		this.gameState.moveObject(this.my_id, xyLoc); // TODO
+		
 		if (this.output) {
-			this.output.innerHTML = "X: " + pos.x + ", Y: " + pos.y + ", Alt: " + pos.altitude + ", Acc: " + Location.accuracy + "<br>";
-		}
-
-
-		if (this.output) {
-			this.output.innerHTML = "queries: " + queries++ +
-				"<br>X: " + pos.x +
-				"<br>Y: " + pos.y + "<br>Alt: " + pos.altitude +
+			this.output.innerHTML = "queries: " + ++queries +
+				"<br>X: " + xyLoc.x +
+				"<br>Y: " + xyLoc.y + 
+				"<br>Alt: " + xyLoc.altitude +
+				"<br>Heading: " + Location.getHeading() + 
+				"<br>Speed: " + Location.getSpeed() + 
 				"<br>Scale: " + Location.getScale() +
-				"<br>Acc: " + Location.accuracy + "<br>";
+				"<br>Acc: " + Location.getAccuracy() + "<br>";
 		}
 
 	};
