@@ -51,10 +51,22 @@ define(function (require) {
 		if (y > this.max.y) this.max.y = y;
 	};
 
+	BBox.prototype.addCircle = function (center /* Vector2 */, radius) {
+		if (center.x - radius < this.min.x) this.min.x = center.x - radius;
+		if (center.x + radius > this.max.x) this.max.x = center.x + radius;
+		if (center.y - radius < this.min.y) this.min.y = center.y - radius;
+		if (center.y + radius > this.max.y) this.max.y = center.y + radius;
+	};
+
 	BBox.prototype.set = function (p1 /* Vector2 */, p2 /* Vector2 */) {
 		this.clear();
 		this.addPoint(p1);
 		this.addPoint(p2);
+	};
+
+	BBox.prototype.getRandomPoint = function () {
+		return new Vector2(this.min.x + ((this.max.x - this.min.x) * Math.random()),
+								 this.min.y + ((this.max.y - this.min.y) * Math.random()));
 	};
 
 	BBox.prototype.getSize = function () {

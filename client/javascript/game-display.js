@@ -42,9 +42,20 @@ define(function (require) {
 			//state.objects[i].draw(this.canvas);
 		}
 
-		//for(var i in state.walls){
-		//	state.walls[i].draw(this.canvas);
-		//}
+		// Draw the game boundary
+		var points = state.gameBounds.getPoints();
+		var fenceColor = 'rgb(150, 100, 100)';
+		for (var i = 0; i < points.length; i++) {
+			this.canvas.drawLineV(points[i], points[(i+1)%points.length], fenceColor);
+		}
+		for (var i = 0; i < points.length; i++) {
+			this.canvas.drawCircle(points[i].x, points[i].y, this.canvas.pixelsToUnits(10), 'rgb(0, 0, 0)',  fenceColor);
+		}
+
+		// Draw the test points
+		for (var i = 0; i < state.testPoints.length; i++) {
+			this.canvas.drawCircle(state.testPoints[i].x, state.testPoints[i].y, this.canvas.pixelsToUnits(4), 'rgb(30, 30, 100)');
+		}
 
 	};
 

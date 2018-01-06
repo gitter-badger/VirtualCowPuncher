@@ -27,7 +27,7 @@
 		}
 
 		function onAddFencepost() {
-			this.scene.addFencepost();
+			controller.addGameBound();
 		}
 
 	</script>
@@ -35,6 +35,8 @@
 	GPS TEST BODY!
 
 	<div id='output'></div>
-	<!--<input type='button' value='Add Fencepost' onclick='onAddFencepost();' />-->
-	<canvas id='locationCanvas' width=600 height=600></canvas>
+	<input type='button' value='Add Fencepost' onclick='onAddFencepost();' />
+	<div>
+		<canvas id='locationCanvas' width=600 height=600></canvas>
+	</div>
 

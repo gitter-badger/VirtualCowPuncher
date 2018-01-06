@@ -11,12 +11,15 @@ define(function (require) {
 	var Vector2 = require('./vector2');
 	//var Cow = require('./objects/cow');
 	//var Player = require('./objects/player');
+	var BoundedArea = require('./bounded-area');
 	var Serialize = require('./serialize');
 
 	function GameState() {
 
 		this.objects = {};
-		this.walls = [];
+		this.walls = [];		// J: Was this meant to be the bounds or something else?
+		this.gameBounds = new BoundedArea();	// The valid game area.
+		this.testPoints = [];
 
 		this.bbox = new BBox();
 	}
@@ -54,22 +57,27 @@ define(function (require) {
 		}
 			
 		this.objects[object_id].setPosition(position);
-		this.bbox.addPoint2(position.x - 100, position.y - 100);
-		this.bbox.addPoint2(position.x + 100, position.y + 100);
+		this.bbox.addCircle(position, 10);
 	};
 
 	GameState.prototype.removeObject = function (object_id) {
 		delete this.objects[object_id];
 	};
 
+	// Add a point to the game boundary
+	GameState.prototype.addGameBound = function (point /* Vector2 */) {
+		this.gameBounds.addPoint(point);
+		this.bbox.addCircle(point, 10);
+	};
 
-	GameState.prototype.addWall = function (position /* Vector2 */) {
-
+	GameState.prototype.addTestPoint = function (point /* Vector2 */) {
+		this.testPoints.push(point);
 	};
 	
 	GameState.prototype.updateFromJSON = function (stateJSON) {
 		var newState = JSON.parse(stateJSON);
 
+		// Load the dynamic objects
 		var newObjList = {};
 		if (newState.objs) {
 			for (var id in newState.objs) {
@@ -83,22 +91,30 @@ define(function (require) {
 			}
 		}
 		this.objects = newObjList;
-		if (newState.walls) {
-			this.walls = newState.walls;
-		}
+		
+		// Load the game boundaries
+		if (newState.bounds)
+			this.gameBounds.read(newState.bounds);
+
+		// Load the bounding box
 		this.bbox.read(newState.bbox);
 	};
 
 	GameState.prototype.toJSON = function () {
 		
 		var jsonState = { };
+
+		// Save the dynamic objects
 		jsonState.objs = {};
 		for (var i in this.objects) {
 			var saveObj = Serialize.write(this.objects[i]);
 			jsonState.objs[i] = saveObj;			// Save as ID->object keys.
 		}
 
-		jsonState.walls = this.walls;
+		// Save the game boundaries  (TODO: Only write if they have changed?)
+		jsonState.bounds = this.gameBounds.write();
+		
+		// Save the bounding box
 		jsonState.bbox = this.bbox.write();
 
 		return JSON.stringify(jsonState);

@@ -33,7 +33,7 @@ define(function (require) {
 		// Sent periodically from the server so the game state is syncronized with all clients.
 		this.socket.on("game_state", function (state) {
 			//console.log("state: " + state);
-			self.gameState.updateFromJSON(state);
+			//self.gameState.updateFromJSON(state);
 		});
 
 		//Location.startPolling(function() { self._onLocationChange(); });		// use this to update location when it has changed.
@@ -41,7 +41,7 @@ define(function (require) {
 
 		this.drawTimerID = setInterval(function () {
 			self._onDraw();
-		}, 33);
+		}, 100 /* 10 frames / sec */);
 	}
 
 	var queries = 0;	// debugging.
@@ -67,11 +67,38 @@ define(function (require) {
 
 	};
 
+	// Add a game boundary at the current location.
+	var added = false;
+	GameController.prototype.addGameBound = function () {
+		var xyLoc = Location.getXYLocation();
+		if (!xyLoc)
+			return;
+				
+		//var points = [];
+		//points.push(new Vector2(xyLoc.x + 50, xyLoc.y + 50));
+		//points.push(new Vector2(xyLoc.x + 50, xyLoc.y - 50));
+		//points.push(new Vector2(xyLoc.x - 50, xyLoc.y - 50));
+		//points.push(new Vector2(xyLoc.x - 50, xyLoc.y + 50));
 
+		this.gameState.addGameBound(new Vector2(10, 10));
+		this.gameState.addGameBound(new Vector2(50, -50));
+		this.gameState.addGameBound(new Vector2(-50, -50));
+		this.gameState.addGameBound(new Vector2(-100, 0));
+		this.gameState.addGameBound(new Vector2(-50, 50));
+
+		var numTestPoints = 6000;
+		for (var i = 0; i < numTestPoints; i++)
+			this.gameState.addTestPoint(this.gameState.gameBounds.getRandomPoint());
+
+		//for (var i = 0; i < points.length; i++) 
+		//	this.socket.emit("add_game_bound", points[i].write());
+		
+		//this.socket.emit("add_test_points", { id: this.my_id, x: xyLoc.x, y: xyLoc.y});
+	};
+	
 	GameController.prototype._onDraw = function () {
 		this.gameDisplay.draw(this.gameState);
 	};
 
 	return GameController;
-})
-;
+});
