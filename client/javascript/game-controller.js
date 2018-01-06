@@ -25,22 +25,6 @@ define(function (require) {
 
 		this.socket = io();
 
-		var player = new Player();
-		player.setPosition(new Vector2(20, 30));
-		this.gameState.addObject(player);
-
-		var cow = new Cow();
-		cow.setPosition(new Vector2(-10, -19));
-		cow.fleeDistance = 12;
-		this.gameState.addObject(cow);
-
-		var json = this.gameState.toJSON();
-
-		this.gameState.removeObject(cow.id);
-
-		this.gameState.updateFromJSON(json);
-
-
 		// Sent when the server recieves a connection from this client.
 		this.socket.on('assign_id', function(assigned_id){
 			self.my_id = assigned_id["id"];
