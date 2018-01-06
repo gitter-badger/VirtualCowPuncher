@@ -6,6 +6,8 @@ define(function (require) {
 
 	var GameState = require('common/game-state');
 	var Canvas2D = require('canvas2d');
+	var Cow = require('common/objects/cow');
+	var Player = require('common/objects/player');
 
 	function GameDisplay(canvasElement) {
 		this.canvas = new Canvas2D(canvasElement);
@@ -32,7 +34,7 @@ define(function (require) {
 		//this.canvas.drawCircle(playerPos.x, playerPos.y, this.canvas.pixelsToUnits(10) /* radius */, 'rgb(0, 0, 255)', 'rgb(0, 0, 0)');
 		for (var i in state.objects) {
 			//if(state.objects[i]['position']) {
-			if (state.objects[i].type === 'cow') {
+			if (state.objects[i] instanceof Cow) {
 				this.canvas.drawCircle(state.objects[i].position['x'], state.objects[i].position['y'], this.canvas.pixelsToUnits(10) /* radius */, 'rgb(0, 0, 0)', 'rgb(255, 255, 255)');
 			} else {
 				this.canvas.drawCircle(state.objects[i].position['x'], state.objects[i].position['y'], this.canvas.pixelsToUnits(10) /* radius */, 'rgb(60, 60, 255)', 'rgb(150, 150, 150)');

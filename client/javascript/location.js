@@ -130,7 +130,7 @@ define(function (require)  {
 					function (position) {  self.position = position;  if (callback) callback(); },		// successCallback
 					function (error)    {  console.log("Geolocation error: " + self.translateErrorMessage(error));    },
 					{ enableHighAccuracy: true,
-					  timeout: 100,
+					  timeout: 300,
 					  maximumAge: 0 
 					});
 				}, 1000 / freqPerSec);

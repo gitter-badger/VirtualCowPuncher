@@ -33,15 +33,15 @@ define(function (require) {
 		return n;
 	};
 
-	Matrix.prototype.toJSON = function () {
-		var jsonE = [];
+	Matrix.prototype.write = function () {
+		var vals = [];
 		for (var i = 0; i < this.e.length; i++) {
-			jsonE.push(MathExt.round(this.e[i], 5));
+			vals.push(MathExt.round(this.e[i], 5));
 		};
-		return { e: jsonE };
+		return { e: vals};
 	};
 
-	Matrix.FromJSON = function (json) {
+	Matrix.read = function (json) {
 		var m = new Matrix();
 		for (var i = 0; i < json.e.length; i++) {
 			m.e[i] = json.e[i];

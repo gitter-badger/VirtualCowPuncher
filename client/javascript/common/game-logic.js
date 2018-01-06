@@ -5,6 +5,8 @@ define(function (require) {
 
 	var Vector2 = require("./vector2");
 	var GameState = require('./game-state');
+	var Cow = require("./objects/cow");
+	var Player = require("./objects/player");
 
 	function GameLogic() {
 		// This might not need to be a prototype. All of the game state will be in
@@ -12,15 +14,19 @@ define(function (require) {
 		// justification
 		// .. or maybe GameLogic should own a GameState instance
 	}
-
+	
 	function splitObjectsByType(allObjects){
 		var afterSplit = {};
-		for(var i in allObjects){
-			var type = allObjects[i]['type'];
-			if(!(type in afterSplit)){
+		for (var id in allObjects) {
+			var type = 'unknown';
+			if (allObjects[id] instanceof Cow)	
+				type = 'cow';
+			else if (allObjects[id] instanceof Player)
+				type = 'player'
+			if (!(type in afterSplit)) {
 				afterSplit[type] = {};
 			}
-			afterSplit[type][i] = allObjects[i];
+			afterSplit[type][id] = allObjects[id];
 		}
 		return afterSplit;
 	}

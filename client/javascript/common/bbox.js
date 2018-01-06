@@ -8,9 +8,9 @@ define(function (require) {
 
 	var Vector2 = require("./vector2");
 
-	function BBox(p1, p2) {
-		this.min = { x: 1e8, y: 1e8};
-		this.max = { x: -1e8, y: -1e8};
+	function BBox(p1 /* opt, Vector2 */, p2 /* opt, Vector2 */) {
+		this.min = new Vector2(1e8, 1e8);
+		this.max = new Vector2(-1e8, -1e8);	// Having a max smaller than the min indicates an uninitialized bbox.
         
 		if (p1 != null)
 			this.addPoint(p1);
@@ -20,6 +20,20 @@ define(function (require) {
 
 	BBox.prototype.isValid = function () {
 		return this.min.x <= this.max.x;
+	};
+
+	BBox.prototype.write = function (precision) {
+		if (!precision)
+			precision = 3;
+		return {  min: this.min.write(precision),  max: this.max.write(precision) };
+	};
+
+	BBox.prototype.read = function (obj) {
+		this.set(Vector2.read(obj.min), Vector2.read(obj.max));
+	};
+
+	BBox.read = function (obj) {
+		return new BBox(Vector2.read(obj.min), Vector2.read(obj.max));
 	};
 
 	BBox.prototype.addPoint = function (p /* Vector2 */) {
@@ -35,6 +49,12 @@ define(function (require) {
 		if (x > this.max.x) this.max.x = x;
 		if (y < this.min.y) this.min.y = y;
 		if (y > this.max.y) this.max.y = y;
+	};
+
+	BBox.prototype.set = function (p1 /* Vector2 */, p2 /* Vector2 */) {
+		this.clear();
+		this.addPoint(p1);
+		this.addPoint(p2);
 	};
 
 	BBox.prototype.getSize = function () {

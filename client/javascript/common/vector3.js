@@ -41,7 +41,7 @@ define(function (require) {
 		}
 	}
 
-	Vector3.prototype.toJSON = function (precision) {
+	Vector3.prototype.write = function (precision) {
 		if (!precision)
 			precision = 3;
 		return {
@@ -49,12 +49,17 @@ define(function (require) {
 		};
 	};
 
-	Vector3.FromJSON = function (json) {
-		return new Vector3(json.v[0], json.v[1], json.v[2]);
+	// Set this object to the value in the saved object.
+	Vector3.prototype.read = function (obj) {
+		this.set(obj.v[0], obj.v[1], obj.v[2]);
+	};
+
+	Vector3.read = function (obj) {
+		return new Vector3(obj.v[0], obj.v[1], obj.v[2]);
 	};
 
 	// Efficiently convert an array of Vector3 points to JSON
-	Vector3.ArrayToJSON = function (array /* Vector3[] */, precision) {
+	Vector3.writeArray = function (array /* Vector3[] */, precision) {
 		if (!precision)
 			precision = 3;
 
@@ -68,7 +73,7 @@ define(function (require) {
 	};
 
 	// Convert a JSON object that was created by ArrayToJSON back to an array of Vector3 points.
-	Vector3.ArrayFromJSON = function (json) {
+	Vector3.readArray = function (json) {
 		var jsonArray = json.a;
 		var array = new Array(jsonArray.length / 3);
 

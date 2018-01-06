@@ -29,7 +29,7 @@ define(function (require) {
 	    return this;
     };
 
-    Vector2.prototype.toJSON = function (precision) {
+    Vector2.prototype.write = function (precision) {
 	    if (!precision)
 		    precision = 3;
 	    return {
@@ -37,12 +37,17 @@ define(function (require) {
 	    };
     };
 
-    Vector2.FromJSON = function (json) {
-	    return new Vector2(json.v[0], json.v[1]);
+	// Set this object to the value in the saved object.
+	Vector2.prototype.read = function (obj) {
+		this.set(obj.v[0], obj.v[1]);
+	};
+
+    Vector2.read = function (obj) {
+	    return new Vector2(obj.v[0], obj.v[1]);
     };
 
     // Efficiently convert an array of Vector2 points to JSON
-    Vector2.ArrayToJSON = function (array /* Vector2[] */, precision) {
+    Vector2.writeArray = function (array /* Vector2[] */, precision) {
 	    if (!precision)
 		    precision = 3;
 
@@ -55,7 +60,7 @@ define(function (require) {
     };
 
     // Convert a JSON object that was created by ArrayToJSON back to an array of Vector2 points.
-    Vector2.ArrayFromJSON = function (json) {
+    Vector2.readArray = function (json) {
 	    var jsonArray = json.a;
 	    var array = new Array(jsonArray.length / 2);
 

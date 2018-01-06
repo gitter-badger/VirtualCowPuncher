@@ -24,11 +24,11 @@ define(function (require) {
 		this.long = long;
 	};
 
-	GCoord.prototype.toJSON = function (precision) {
+	GCoord.prototype.write = function (precision) {
 		return {  x: MathExt.round(this.lat, precision), y: MathExt.round(this.long, precision)  };
 	};
 
-	GCoord.FromJSON = function (json) {
+	GCoord.read = function (json) {
 		var coord = new GCoord(json.x, json.y);
 		return coord;
 	};
