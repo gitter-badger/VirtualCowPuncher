@@ -73,20 +73,18 @@ define(function (require) {
 		var xyLoc = Location.getXYLocation();
 		if (!xyLoc)
 			return;
-				
-		//var points = [];
-		//points.push(new Vector2(xyLoc.x + 50, xyLoc.y + 50));
-		//points.push(new Vector2(xyLoc.x + 50, xyLoc.y - 50));
-		//points.push(new Vector2(xyLoc.x - 50, xyLoc.y - 50));
-		//points.push(new Vector2(xyLoc.x - 50, xyLoc.y + 50));
 
-		this.gameState.addGameBound(new Vector2(10, 10));
+
 		this.gameState.addGameBound(new Vector2(50, -50));
-		this.gameState.addGameBound(new Vector2(-50, -50));
-		this.gameState.addGameBound(new Vector2(-100, 0));
-		this.gameState.addGameBound(new Vector2(-50, 50));
+		this.gameState.addGameBound(new Vector2(20, -50));
+		this.gameState.addGameBound(new Vector2(0, -50));
+		this.gameState.addGameBound(new Vector2(-50, 30));
+		this.gameState.addGameBound(new Vector2(50, 70));
+		this.gameState.addGameBound(new Vector2(20, 20));
+		this.gameState.addGameBound(new Vector2(20, -10));
+		this.gameState.addGameBound(new Vector2(30, -20));
 
-		var numTestPoints = 6000;
+		var numTestPoints = 100;
 		for (var i = 0; i < numTestPoints; i++)
 			this.gameState.addTestPoint(this.gameState.gameBounds.getRandomPoint());
 

@@ -51,6 +51,10 @@ define(function (require) {
 		for (var i = 0; i < points.length; i++) {
 			this.canvas.drawCircle(points[i].x, points[i].y, this.canvas.pixelsToUnits(10), 'rgb(0, 0, 0)',  fenceColor);
 		}
+		//var validPoints = state.gameBounds.validPoints;
+		//for (var i = 0; i < validPoints.length; i++) {
+		//	this.canvas.drawCircle(validPoints[i].x, validPoints[i].y, this.canvas.pixelsToUnits(6), 'rgb(0, 200, 0)',  fenceColor);
+		//}
 
 		// Draw the test points
 		for (var i = 0; i < state.testPoints.length; i++) {

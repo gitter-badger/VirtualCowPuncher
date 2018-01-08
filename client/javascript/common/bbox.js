@@ -36,6 +36,14 @@ define(function (require) {
 		return new BBox(Vector2.read(obj.min), Vector2.read(obj.max));
 	};
 
+	BBox.prototype.getWidth = function () {
+		return this.max.x - this.min.x;
+	};
+
+	BBox.prototype.getHeight = function () {
+		return this.max.y - this.min.y;
+	};
+
 	BBox.prototype.addPoint = function (p /* Vector2 */) {
 		if (p.x < this.min.x) this.min.x = p.x;
 		if (p.x > this.max.x) this.max.x = p.x;

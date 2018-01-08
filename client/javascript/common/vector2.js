@@ -111,29 +111,39 @@ define(function (require) {
 	    return this;
     };
 
-       Vector2.prototype.normalized = function () {
-          var result = this.clone();
-          result.div(this.length());
-          return result;
-       };
+   Vector2.prototype.normalized = function () {
+      var result = this.clone();
+      result.div(this.length());
+      return result;
+   };
 
-       // Angle between two vec2 objects.  In radians.
-       Vector2.prototype.angleBetween = function (other /* Vector2 */) {
-          var a = this.normalized();
-          var b = other.normalized();
-          var dot = a.dot(b);
-          return Math.acos(dot);
-       };
+   // Angle between two vec2 objects.  In radians.
+   Vector2.prototype.angleBetween = function (other /* Vector2 */) {
+      var a = this.normalized();
+      var b = other.normalized();
+      var dot = a.dot(b);
+      return Math.acos(dot);
+   };
 
-       // The angle from (0,1) in radians.  Range = {0, 2 * PI}
-       Vector2.prototype.angle = function () {
-          var p = this.normalized();
+   // The angle from (0,1) in radians.  Range = {0, 2 * PI}
+   Vector2.prototype.angle = function () {
+      var p = this.normalized();
 
-          var angle = Math.acos(p.x);	    // Returns a value between 0 and PI.
-          if (p.y < 0)
-	          angle = Math.PI + (Math.PI - angle);
-          return angle;
-       };
+      var angle = Math.acos(p.x);	    // Returns a value between 0 and PI.
+      if (p.y < 0)
+	      angle = Math.PI + (Math.PI - angle);
+      return angle;
+   };
+
+	// Angle is relative to the other.  If other is CCW, the result is positive.  CW = negative.
+	Vector2.prototype.relAngle = function (other /* vector */) {
+		angleDelta = other.angle - this.angle();
+		if (angleDelta > Math.PI)
+			angleDelta = angleDelta - (Math.PI * 2.0);
+		else if (testAngle < -Math.PI)
+			angleDelta = angleDelta + (Math.PI * 2.0);
+		return angleDelta;
+	};
 
     Vector2.prototype.addScalar = function (scalar) {
 	    this.x += scalar;

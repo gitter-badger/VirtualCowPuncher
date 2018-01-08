@@ -13,7 +13,7 @@ define(function (require) {
 
 	function BoundedArea() {
 		this.points = [];			// Vector2[]
-
+		
 		// Data derived from the points.
 		this.needsProcessing = false;
 		this.lines = [];		// The convex lines connecting the points.
@@ -42,17 +42,30 @@ define(function (require) {
 	BoundedArea.prototype.process = function () {
 		this.lines = [];
 		this.bbox.clear();
-		
-		// TODO: Take care of straight lines and convex points.
-		var numPoints = this.points.length;
-		for (var i = 0; i < numPoints; i++) {
-			this.bbox.addPoint(this.points[i]);
-			var line = new Line(this.points[i], this.points[(i+1)%numPoints]);
-			line.setNormalSide(this.points[(i+2)%numPoints]);	// Set the normal of the line so it points in.
-			this.lines.push(line);
+		this.needsProcessing = false;
+				
+		// Do not consider points that form straight lines.  They're redundant and would only mess things up.
+		var vps = this.points.slice(0);		// valid points.  Clone the array so the original is not affected.
+		for (var i = 0; i < vps.length; i++) {
+			var line = new Line(vps[i], vps[(i+2) % vps.length]);
+			if (line.distance(vps[(i+1) % vps.length]) < line.length() / 100) {
+				vps.splice((i+1) % vps.length, 1);		// Remove the center point.  It's on the line containing its two neighbors.
+				i--;	// Test this point again.
+			}
 		}
 
-		this.needsProcessing = false;
+		if (vps.length < 3)
+			return;
+				
+		// Create the lines from the points.
+		var np = vps.length;
+		for (var i = 0; i < np; i++) {
+			this.bbox.addPoint(vps[i]);
+			var line = new Line(vps[i], vps[(i+1)%np]);
+	
+			this.lines.push(line);
+		}
+		return;
 	};
 
 	// Get a random point within the bounded area.
@@ -71,11 +84,13 @@ define(function (require) {
 	BoundedArea.prototype.isWithin = function (p /* Vector2 */) {
 		if (this.needsProcessing)
 			this.process();
+		var testLine = new Line(p, new Vector2(p.x + this.bbox.getWidth() * 1000 + 1000, p.y));
+		var intersects = 0;
 		for (var i = 0; i < this.lines.length; i++)  {
-			if (!this.lines[i].isNormalSide(p))
-				return false;
+			if (testLine.doesIntersect(this.lines[i]))
+				intersects++;
 		}
-		return true;
+		return intersects % 2 == 1;
 	}
 
 	BoundedArea.prototype.write = function () {
